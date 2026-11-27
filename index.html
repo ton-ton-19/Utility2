@@ -1,100 +1,407 @@
-from pathlib import Path
-
-html = r'''<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>GSP SMART PPS | GSP.1</title>
 <style>
-:root{--navy:#101b30;--navy2:#182943;--blue:#347ff0;--bg:#f3f6fb;--ink:#18243a;--muted:#718096;--line:#e4eaf2;--white:#fff}
-*{box-sizing:border-box}body{margin:0;font:14px "Segoe UI",Tahoma,sans-serif;background:var(--bg);color:var(--ink)}
-.app{display:flex;min-height:100vh}.sidebar{width:258px;background:var(--navy);color:#d8e4f5;display:flex;flex-direction:column;flex-shrink:0;transition:.2s;overflow:hidden}.sidebar.collapsed{width:76px}
-.brand{height:82px;display:flex;align-items:center;gap:12px;padding:0 19px;border-bottom:1px solid #2b3a52;white-space:nowrap}.logo{width:39px;height:39px;border-radius:11px;background:#1f3b66;display:grid;place-items:center;color:#8dbaff;font-size:23px;flex-shrink:0}.brand strong{color:white;font-size:15px}.brand small{display:block;color:#91a6c5;font-size:10px;margin-top:3px}
-.nav{padding:13px 11px;overflow:auto;flex:1}.group{font-size:10px;letter-spacing:1px;color:#7589a7;padding:13px 12px 6px;white-space:nowrap}.nav button{width:100%;border:0;background:transparent;color:#bdcbe0;padding:11px 12px;border-radius:9px;display:flex;align-items:center;gap:13px;text-align:left;cursor:pointer;margin:2px 0;font-weight:600;font-size:12px;white-space:nowrap}.nav button:hover{background:#1b2b45;color:white}.nav button.active{background:var(--blue);color:white;box-shadow:0 5px 15px #0002}.ico{width:20px;text-align:center;font-size:17px;flex-shrink:0}.sidefoot{padding:12px;border-top:1px solid #2b3a52}.sidefoot button{width:100%;padding:11px;border:0;border-radius:9px;background:#1b2b45;color:#d6e3f5;cursor:pointer}.sidebar.collapsed .brand{padding:0 18px}.sidebar.collapsed .brandcopy,.sidebar.collapsed .group,.sidebar.collapsed .txt,.sidebar.collapsed .collapse-label{display:none}.sidebar.collapsed .nav button{justify-content:center;padding:12px 0}
-main{flex:1;min-width:0;padding:25px clamp(15px,3vw,38px) 45px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:22px}.crumb{font-size:11px;color:var(--muted)}h1{font-size:25px;margin:6px 0 4px}.subtitle{font-size:12px;color:var(--muted)}.topright{display:flex;gap:9px;align-items:center}.tag{background:#e8f1ff;color:#2766c8;padding:8px 12px;border-radius:20px;font-size:11px;font-weight:700}.top input{border:1px solid var(--line);border-radius:9px;padding:9px;background:white;color:#40516b}
-.page{display:none}.page.active{display:block}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.card{background:white;border:1px solid var(--line);border-radius:14px;padding:17px;box-shadow:0 2px 5px #15233b05}.metric small{color:var(--muted);font-size:11px}.metric strong{display:block;font-size:25px;margin:8px 0 4px}.metric em{font-style:normal;color:#8a98aa;font-size:10px}.columns{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;margin-top:16px}.section-title{font-size:15px;margin:0 0 13px}.chart{height:180px;display:flex;align-items:end;gap:13px;padding:10px 5px 23px;border-bottom:1px solid var(--line)}.chart .empty{width:100%;text-align:center;align-self:center}.quick{display:grid;grid-template-columns:1fr 1fr;gap:9px}.quick button{display:flex;align-items:center;gap:9px;padding:12px;border:1px solid var(--line);border-radius:10px;background:#fff;text-align:left;cursor:pointer}.quick button:hover{border-color:#9abdf5;background:#f8fbff}.quick b{font-size:11px}.quick small{display:block;font-size:10px;color:var(--muted);margin-top:3px}
-.note{margin-top:14px;padding:12px;border:1px solid #f1dfb4;background:#fff8e8;color:#805b12;border-radius:10px;font-size:11px;line-height:1.6}.muted{color:var(--muted);font-size:11px}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0}.btn{border:0;background:var(--blue);color:white;padding:10px 14px;border-radius:8px;font-weight:700;cursor:pointer}.btn.alt{background:#e9eef6;color:#40516b}.form{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:15px}.field label{display:block;font-size:11px;font-weight:700;color:#64748b;margin-bottom:6px}.field input,.field select{width:100%;padding:10px;border:1px solid #dce5f0;border-radius:8px;background:white;font:inherit}.empty{padding:25px;text-align:center;color:var(--muted)}table{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px}th,td{text-align:left;padding:11px;border-bottom:1px solid var(--line)}th{background:#f7f9fc;color:#66758a;font-size:10px}
-@media(max-width:1050px){.cards{grid-template-columns:repeat(2,1fr)}.columns{grid-template-columns:1fr}}@media(max-width:700px){.sidebar{width:76px}.sidebar .brand{padding:0 18px}.sidebar .brandcopy,.sidebar .group,.sidebar .txt,.sidebar .collapse-label{display:none}.sidebar .nav button{justify-content:center;padding:12px 0}main{padding:16px 11px}.tag{display:none}.form{grid-template-columns:1fr 1fr}}@media(max-width:470px){.cards{grid-template-columns:1fr 1fr}.form{grid-template-columns:1fr}.top{align-items:flex-start}.topright{flex-direction:column;align-items:flex-end}}
-</style>
-</head>
-<body>
-<div class="app">
-<aside class="sidebar" id="sidebar">
- <div class="brand"><div class="logo">✦</div><div class="brandcopy"><strong>GSP SMART PPS</strong><small>Plant Problem Solving · GSP.1</small></div></div>
- <nav class="nav">
-  <div class="group">OVERVIEW</div>
-  <button class="active" data-page="dashboard"><span class="ico">▦</span><span class="txt">Dashboard</span></button>
-  <div class="group">PPS REPORT</div>
-  <button data-page="monthly"><span class="ico">▤</span><span class="txt">Monthly PPS Report</span></button>
-  <button data-page="yearly"><span class="ico">▥</span><span class="txt">Yearly Summary</span></button>
-  <button data-page="create"><span class="ico">＋</span><span class="txt">Create New Report</span></button>
-  <div class="group">PERFORMANCE</div>
-  <button data-page="process"><span class="ico">⚙</span><span class="txt">Process</span></button>
-  <button data-page="utility"><span class="ico">♧</span><span class="txt">Utility</span></button>
-  <div class="group">SHIFT PERFORMANCE</div>
-  <button data-page="shiftA"><span class="ico">A</span><span class="txt">Shift A</span></button><button data-page="shiftB"><span class="ico">B</span><span class="txt">Shift B</span></button><button data-page="shiftC"><span class="ico">C</span><span class="txt">Shift C</span></button><button data-page="shiftD"><span class="ico">D</span><span class="txt">Shift D</span></button>
-  <div class="group">PLANT PROBLEM SOLVING</div>
-  <button data-page="breakdown"><span class="ico">⚠</span><span class="txt">Equipment Breakdown</span></button>
-  <button data-page="control"><span class="ico">⌁</span><span class="txt">Off Control Value</span></button>
-  <button data-page="refrig"><span class="ico">❄</span><span class="txt">Make up Refrigeration</span></button>
-  <button data-page="pond"><span class="ico">◉</span><span class="txt">Water System / Pond</span></button>
-  <button data-page="weak"><span class="ico">◇</span><span class="txt">Weak Point</span></button>
-  <button data-page="isolation"><span class="ico">▣</span><span class="txt">Isolation Book</span></button>
-  <button data-page="override"><span class="ico">⛨</span><span class="txt">Override / Bypass</span></button>
-  <button data-page="follow"><span class="ico">♧</span><span class="txt">Follow up & Notification</span></button>
-  <button data-page="workorder"><span class="ico">☷</span><span class="txt">Pending Work Order</span></button>
-  <div class="group">SYSTEM</div>
-  <button data-page="data"><span class="ico">▦</span><span class="txt">Data Management</span></button><button data-page="settings"><span class="ico">⚙</span><span class="txt">Settings</span></button>
- </nav>
- <div class="sidefoot"><button id="collapse">⇤ <span class="collapse-label">ย่อเมนู / Collapse</span></button></div>
-</aside>
-<main>
- <header class="top"><div><div class="crumb">GSP.1 / <span id="crumb">Overview</span></div><h1 id="heading">Dashboard</h1><div class="subtitle" id="subtitle">Plant Problem Solving — ภาพรวมรายงานประจำเดือน</div></div><div class="topright"><span class="tag">GSP.1 · PROCESS / UTILITY</span><input id="period" type="month" value="2025-06"></div></header>
- <section class="page active" id="dashboard">
-  <div class="cards">
-   <div class="card metric"><small>Equipment Breakdown</small><strong>—</strong><em>รอข้อมูลจริง</em></div><div class="card metric"><small>Off Control Value</small><strong>—</strong><em>รอข้อมูลจริง</em></div><div class="card metric"><small>Follow up Request</small><strong>—</strong><em>รอข้อมูลจริง</em></div><div class="card metric"><small>Override / Bypass</small><strong>—</strong><em>รอข้อมูลจริง</em></div>
-  </div>
-  <div class="columns"><div class="card"><h2 class="section-title">Monthly Performance Trend</h2><div class="chart"><div class="empty">กราฟจะแสดงเมื่อมีการบันทึกข้อมูลจริง</div></div><p class="muted">ยังไม่มีการนำเข้าข้อมูลผลการดำเนินงาน</p></div><div class="card"><h2 class="section-title">PPS Quick Access</h2><div class="quick">
-   <button data-jump="breakdown"><span>⚠</span><span><b>Equipment Breakdown</b><small>เครื่องจักรขัดข้อง</small></span></button><button data-jump="control"><span>⌁</span><span><b>Off Control Value</b><small>ผล Lab นอก Control</small></span></button><button data-jump="pond"><span>◉</span><span><b>Water System / Pond</b><small>ระบบน้ำและบ่อ</small></span></button><button data-jump="follow"><span>♧</span><span><b>Follow up</b><small>รายการติดตาม</small></span></button>
-  </div></div></div>
-  <div class="note"><b>Prototype Notice:</b> ตัวเลข KPI ยังไม่แสดง เนื่องจากยังไม่ได้เชื่อมข้อมูลจริง ระบบนี้เป็นต้นแบบ Phase 1</div>
- </section>
- <section class="page" id="monthly"><div class="card"><h2 class="section-title">Monthly PPS Report</h2><p class="muted">รายงาน Plant Problem Solving ประจำเดือน GSP.1</p><div class="toolbar"><button class="btn" onclick="showPage('create')">＋ Create Report</button><button class="btn alt" onclick="window.print()">Print / Save PDF</button></div><div id="reports"></div></div></section>
- <section class="page" id="yearly"><div class="card"><h2 class="section-title">Yearly Summary</h2><p class="muted">สรุปแนวโน้มรายปีจากรายงานรายเดือน</p><div class="empty">ยังไม่มีข้อมูลรายปี</div></div></section>
- <section class="page" id="create"><div class="card"><h2 class="section-title">Create New Monthly PPS Report</h2><p class="muted">สร้างหัวรายงานก่อนรวบรวมข้อมูลแต่ละหัวข้อ</p><div class="form">
-  <div class="field"><label>Report Month</label><input id="rmonth" type="month" value="2025-06"></div>
-  <div class="field"><label>Area / หน่วยงาน</label><select id="rarea"><option>GSP.1</option><option>GSP.1 Process</option><option>GSP.1 Utility</option></select></div>
-  <div class="field"><label>Shift</label><select id="rshift"><option>All Shifts</option><option>Shift A</option><option>Shift B</option><option>Shift C</option><option>Shift D</option></select></div>
-  <div class="field"><label>Report Title</label><input id="rtitle" value="Plant Problem Solving of GSP.1"></div>
-  <div class="field"><label>Prepared by</label><input id="rauthor" placeholder="ชื่อผู้จัดทำ"></div>
- </div><div class="toolbar"><button class="btn" id="save">Save Report</button></div><div class="note">ข้อมูล Prototype บันทึกใน Browser เครื่องนี้ (Local Storage) เท่านั้น ยังไม่ใช่ฐานข้อมูลกลาง</div></div></section>
- <section class="page" id="process"><div class="card"><h2 class="section-title">Process Performance</h2><p class="muted">รายงานและปัญหาของหน่วย Process</p><div class="empty">ยังไม่มีข้อมูล Process</div></div></section>
- <section class="page" id="utility"><div class="card"><h2 class="section-title">Utility Performance</h2><p class="muted">รายงานและปัญหาของหน่วย Utility</p><div class="empty">ยังไม่มีข้อมูล Utility</div></div></section>
- <section class="page" id="shiftA"><div class="card"><h2 class="section-title">Shift A Performance</h2><div class="empty">ยังไม่มีข้อมูล Shift A</div></div></section><section class="page" id="shiftB"><div class="card"><h2 class="section-title">Shift B Performance</h2><div class="empty">ยังไม่มีข้อมูล Shift B</div></div></section><section class="page" id="shiftC"><div class="card"><h2 class="section-title">Shift C Performance</h2><div class="empty">ยังไม่มีข้อมูล Shift C</div></div></section><section class="page" id="shiftD"><div class="card"><h2 class="section-title">Shift D Performance</h2><div class="empty">ยังไม่มีข้อมูล Shift D</div></div></section>
- <section class="page" id="breakdown"><div class="card"><h2 class="section-title">Equipment Breakdown</h2><p class="muted">บันทึกเหตุขัดข้องแยกตามอุปกรณ์และเดือน</p><div class="empty">เตรียมพื้นที่สำหรับ Air Compressor, Refrigeration, Cooling Fan, Aux. Boiler, WHB, CHP Boiler, Sales Gas และ Gen.3</div></div></section>
- <section class="page" id="control"><div class="card"><h2 class="section-title">Off Control Value Utility GSP.1 (Lab.)</h2><p class="muted">บันทึกจำนวนครั้งที่ผล Lab อยู่นอก Control Value</p><div class="empty">เตรียมโครงสร้างข้อมูลสำหรับ BFW, Aux. Boiler, WHB และ CHP Boiler</div></div></section>
- <section class="page" id="refrig"><div class="card"><h2 class="section-title">C3 Make up Refrigeration System</h2><p class="muted">ปริมาณ Make up Refrigeration (m³) รายเดือน</p><div class="empty">ยังไม่มีข้อมูลรายเดือน</div></div></section>
- <section class="page" id="pond"><div class="card"><h2 class="section-title">200,000 m³ Pond</h2><p class="muted">สถานะบ่อ, Volume, Mitigation Plan และ Monitoring</p><div class="empty">ยังไม่มีข้อมูลสถานะบ่อ</div></div></section>
- <section class="page" id="weak"><div class="card"><h2 class="section-title">Weak Point</h2><div class="empty">ยังไม่มีข้อมูล Weak Point</div></div></section><section class="page" id="isolation"><div class="card"><h2 class="section-title">Isolation Book</h2><div class="empty">ยังไม่มีข้อมูล Isolation Book</div></div></section><section class="page" id="override"><div class="card"><h2 class="section-title">Override / Bypass</h2><p class="muted">แยกสถานะไม่เกิน 3 วัน และเกิน 3 วัน (e-MOC)</p><div class="empty">ยังไม่มีข้อมูล Override / Bypass</div></div></section><section class="page" id="follow"><div class="card"><h2 class="section-title">Follow up & Notification</h2><div class="empty">ยังไม่มีข้อมูลติดตาม</div></div></section><section class="page" id="workorder"><div class="card"><h2 class="section-title">Pending Work Order</h2><p class="muted">ใบแจ้งซ่อมที่รอปิดโดย Operation GSP#1</p><div class="empty">ยังไม่มีข้อมูล Pending Work Order</div></div></section>
- <section class="page" id="data"><div class="card"><h2 class="section-title">Data Management</h2><p id="count" class="muted">จำนวนรายงาน: 0</p><button class="btn alt" id="export">Export Report List CSV</button></div></section>
- <section class="page" id="settings"><div class="card"><h2 class="section-title">Settings</h2><p class="muted">System: GSP SMART PPS · Site: GSP.1 · Language: Thai + Technical English</p><p class="muted">Sidebar: Collapsible · Theme: Dark Navy / Blue</p></div></section>
-</main></div>
-<script>
-const labels={dashboard:['Dashboard','Plant Problem Solving — ภาพรวมรายงานประจำเดือน'],monthly:['Monthly PPS Report','รายงาน PPS ประจำเดือน'],yearly:['Yearly Summary','สรุปผลการดำเนินงานรายปี'],create:['Create New Report','สร้างรายงาน PPS ประจำเดือน'],process:['Process Performance','รายงานหน่วย Process'],utility:['Utility Performance','รายงานหน่วย Utility'],shiftA:['Shift A','รายงานแยกตามกะ'],shiftB:['Shift B','รายงานแยกตามกะ'],shiftC:['Shift C','รายงานแยกตามกะ'],shiftD:['Shift D','รายงานแยกตามกะ'],breakdown:['Equipment Breakdown','ประวัติเครื่องจักรขัดข้อง'],control:['Off Control Value','ผล Lab นอก Control Value'],refrig:['Make up Refrigeration','ปริมาณ Make up Refrigeration'],pond:['Water System / Pond','สถานะระบบน้ำและบ่อ'],weak:['Weak Point','รายการ Weak Point'],isolation:['Isolation Book','สถานะ Isolation Book'],override:['Override / Bypass','ติดตาม Override และ e-MOC'],follow:['Follow up & Notification','รายการติดตามและแจ้งเตือน'],workorder:['Pending Work Order','ใบแจ้งซ่อมที่รอปิด'],data:['Data Management','จัดการข้อมูลรายงาน'],settings:['Settings','ตั้งค่าระบบ']};
-function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.nav button[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===id));document.getElementById('heading').textContent=labels[id][0];document.getElementById('subtitle').textContent=labels[id][1];document.getElementById('crumb').textContent=labels[id][0];render();}
-document.querySelectorAll('.nav button[data-page]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
-document.querySelectorAll('[data-jump]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.jump)));
-document.getElementById('collapse').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('collapsed'));
-let reports=JSON.parse(localStorage.getItem('gspSmartPpsReports')||'[]');
-document.getElementById('save').addEventListener('click',()=>{let month=document.getElementById('rmonth').value;if(!month){alert('กรุณาเลือก Report Month');return;}reports.unshift({month,area:document.getElementById('rarea').value,shift:document.getElementById('rshift').value,title:document.getElementById('rtitle').value,author:document.getElementById('rauthor').value});localStorage.setItem('gspSmartPpsReports',JSON.stringify(reports));alert('บันทึกหัวรายงานแล้ว');showPage('monthly');});
-function render(){let el=document.getElementById('reports');if(el)el.innerHTML=reports.length?'<table><thead><tr><th>Month</th><th>Area</th><th>Shift</th><th>Report Title</th><th>Prepared by</th></tr></thead><tbody>'+reports.map(r=>'<tr><td>'+r.month+'</td><td>'+r.area+'</td><td>'+r.shift+'</td><td>'+r.title+'</td><td>'+(r.author||'—')+'</td></tr>').join('')+'</tbody></table>':'<div class="empty">ยังไม่มีรายงานที่บันทึกไว้</div>';document.getElementById('count').textContent='จำนวนหัวรายงานที่บันทึกใน Browser นี้: '+reports.length+' รายการ';}
-document.getElementById('period').addEventListener('change',e=>document.getElementById('rmonth').value=e.target.value);
-document.getElementById('export').addEventListener('click',()=>{let rows=[['Month','Area','Shift','Report Title','Prepared by'],...reports.map(r=>[r.month,r.area,r.shift,r.title,r.author])];let csv=rows.map(row=>row.map(v=>'"'+String(v||'').replace(/"/g,'""')+'"').join(',')).join('\r\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.download='GSP_SMART_PPS_Report_List.csv';a.click();URL.revokeObjectURL(a.href);});
-render();
-</script>
-</body></html>'''
+*{box-sizing:border-box}
+body{margin:0;background:#f4f6f9;color:#111a2e;font:15px 'Segoe UI',Tahoma,sans-serif}
+aside{background:#101829;color:#fff;width:228px;position:fixed;inset:0 auto 0 0;padding:25px 16px;display:flex;flex-direction:column}
+aside strong{display:block;font-size:19px;padding:4px 10px 24px;border-bottom:1px solid #293346}
+aside small{color:#93a6c1;display:block;margin-top:8px;font-size:12px}
+nav{display:grid;gap:7px;margin-top:20px}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer;border:0;border-radius:9px;padding:10px 14px;background:#e8effb;color:#17447f;font-weight:650}
+nav button{text-align:left;background:transparent;color:#aabed8;min-height:44px}
+nav button[aria-current=true],.primary{background:#347aeb;color:#fff}
+aside footer{margin-top:auto;color:#93a6c1;padding:13px;border-top:1px solid #293346;font-size:12px}
+main{margin-left:228px;padding:32px 38px}
+.head,.toolbar,.sectionhead{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.eyebrow{display:inline-block;background:#dfebff;color:#1760ce;font-size:11px;font-weight:750;letter-spacing:1px;padding:4px 8px;border-radius:5px}
+h1{font-size:30px;margin:6px 0 4px}
+h2{font-size:19px;margin:0}
+p,.muted{color:#51627a}
+header p{margin:4px 0}
+.content{max-width:1080px;margin:24px auto}
+.panel,.metric{background:white;border:1px solid #dce5f0;border-radius:16px;box-shadow:0 2px 4px #18284609;padding:20px;margin-bottom:16px}
+.sectionhead{margin-bottom:15px;padding-bottom:12px;border-bottom:1px solid #e0eafe}
+.sectionhead h2{color:#2165c7}
+.cards,.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.metric small{display:block;color:#52647d}
+.metric b{display:block;font-size:27px;margin-top:7px}
+label{display:grid;gap:5px;color:#425675;font-size:13px;font-weight:650}
+input,select,textarea{width:100%;min-width:0;border:1px solid #d7e2ee;border-radius:9px;background:#fff;padding:9px;color:#111a2e}
+textarea{min-height:80px;resize:vertical}
+.wide{grid-column:1/-1}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.scroll{overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:735px}
+th,td{text-align:left;padding:10px;border-bottom:1px solid #e8edf5;vertical-align:top;overflow-wrap:anywhere}
+th{background:#f1f5fb;color:#3e5475}
+.pill{display:inline-block;white-space:nowrap;padding:4px 8px;border-radius:10px;background:#fff0d6;color:#825300;font-size:12px}
+.closed{background:#ddf6e8;color:#146741}
+.bars{height:167px;display:grid;grid-template-columns:repeat(12,minmax(32px,1fr));gap:7px;margin:8px 0}
+.barcol{display:grid;grid-template-rows:24px 1fr 22px;gap:4px;text-align:center;align-items:end;color:#52647d;font-size:12px}
+.bar{width:61%;max-width:37px;justify-self:center;background:#91b8f5;border-radius:6px 6px 0 0}
+.activebar{background:#347aeb}
+.note{font-size:13px;margin:10px 0}
+.danger{color:#9e2626;background:#fde9e8}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid #347aeb;outline-offset:2px}
+dialog{border:1px solid #c8d7e8;border-radius:16px;width:min(760px,94vw);padding:22px;max-height:90vh;overflow:auto}
+dialog::backdrop{background:#10182980}
+@media(max-width:780px){
+  aside{position:static;width:auto;padding:12px}
+  aside strong{padding:0 0 8px}
+  nav{display:flex;flex-wrap:wrap;margin-top:8px}
+  aside footer{display:none}
+  main{margin:0;padding:17px}
+  .grid,.cards{grid-template-columns:1fr 1fr}
+}
+@media(max-width:460px){
+  .grid,.cards{grid-template-columns:1fr}
+  h1{font-size:23px}
+}
 
-path = Path("/mnt/data/GSP_SMART_PPS_GSP1_Phase1.html")
-path.write_text(html, encoding="utf-8")
-print(f"สร้างไฟล์สำเร็จ: {path.name} ({path.stat().st_size:,} bytes)")
+:root{--ink:#121e33;--blue:#276be3;--line:#dde6f1}
+body{background:#f5f7fb;color:var(--ink)}
+aside{width:242px;background:#10192b;padding:24px 16px}
+.brand{display:flex;align-items:center;gap:12px;padding:4px 8px 24px;border-bottom:1px solid #293549}
+.mark{width:37px;height:37px;display:grid;place-items:center;background:#286ce8;border:1px solid #548ef2;border-radius:10px;font-size:21px}
+.brand strong{border:0;padding:0;line-height:1.15;letter-spacing:.1px}
+.brand small{margin-top:5px;font-size:9px;letter-spacing:1.15px;color:#a6bad6}
+.navcaption{color:#8d9fbd;font-size:10px;font-weight:700;letter-spacing:1.1px;margin:26px 10px 0}
+nav{margin-top:10px;gap:6px}
+nav button{display:flex;align-items:center;gap:9px;padding:10px 11px;font-size:13px;border:1px solid transparent}
+nav button:hover{background:#1b2b45}
+nav button[aria-current=true]{background:#286ce8;border-color:#4882ed;box-shadow:0 6px 16px #132f66}
+.navicon{width:20px;text-align:center;font-size:16px}
+main{margin-left:242px;padding:0 34px 35px}
+.head{margin:0 -34px;padding:25px 34px 22px;background:#fff;border-bottom:1px solid #e1e9f4}
+.head h1{font-size:29px;letter-spacing:-.3px}
+.head p{font-size:13px}
+.eyebrow{letter-spacing:1.3px}
+.head input{background:#f8faff}
+.content{max-width:1050px;margin-top:24px}
+.overview-banner{background:#142743;border:1px solid #233b5d;border-radius:15px;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:23px 24px;margin-bottom:16px;color:#fff}
+.overview-banner span,.overview-banner strong,.overview-banner small{display:block}
+.overview-banner span{font-size:10px;letter-spacing:1.5px;font-weight:750;color:#a9c5f5}
+.overview-banner strong{font-size:23px;margin:6px 0}
+.overview-banner small{color:#cbdaef}
+.overview-banner button{background:#fff;color:#214b91;white-space:nowrap}
+.overview-banner b{margin-left:8px}
+.panel,.metric{border-color:var(--line);box-shadow:0 2px 6px #152b4e08}
+.metric{border-top:3px solid #2e74ea;padding:15px 19px}
+.metric:nth-child(2){border-top-color:#547aab}
+.metric:nth-child(3){border-top-color:#c5872e}
+.metric b{font-variant-numeric:tabular-nums}
+.form-panel{max-width:870px;margin:0 auto 15px;padding:19px 22px;scroll-margin-top:15px}
+.form-heading{display:flex;align-items:center;gap:10px}
+.form-heading p{margin:2px 0 0;font-size:12px}
+.step{display:grid;place-items:center;min-width:34px;height:34px;border-radius:9px;background:#e8f0ff;color:#2266dc;font-size:12px;font-weight:800}
+.hint{font-size:11px;color:#61748e}
+label{gap:7px}
+input,select,textarea{border-color:#dbe5f1;background:#fbfcfe}
+input:focus,select:focus,textarea:focus{background:white;border-color:#4683ef}
+.primary{background:#276be3}
+.actions{padding-top:14px;border-top:1px solid #e5ecf5;justify-content:flex-end}
+.bars{height:172px;padding:0 3px;border-bottom:1px solid #dfe8f3}
+.barcol{height:160px}
+.bar{min-height:1px}
+.note[role=status]{background:#edf4ff;padding:9px 13px;border-radius:8px;border:1px solid #dbe8ff}
+.sectionhead h2{color:#172944}
+button:hover{filter:brightness(.96)}
+@media(max-width:780px){
+  aside{width:auto;padding:12px}
+  .brand{padding-bottom:8px}
+  .navcaption{display:none}
+  main{margin:0;padding:0 16px 18px}
+  .head{margin:0 -16px;padding:16px}
+  .overview-banner{flex-wrap:wrap}
+  .form-panel{padding:15px}
+  .head h1{font-size:24px}
+}
+aside nav{overflow:auto;scrollbar-width:thin;margin-top:8px;gap:3px}
+aside .grp{color:#9eafcb;padding:8px 8px 1px;margin:0;font-size:10px;letter-spacing:.8px}
+nav button{min-height:34px;padding:7px 8px;white-space:nowrap}
+nav .navicon{font-size:11px;width:19px;height:19px;display:grid;place-items:center;flex:none;border-radius:4px;background:#ffffff13}
+aside footer{padding:9px 0 0}
+aside footer button{width:100%;text-align:left;background:#1a2c46;color:#d9e7fa}
+body.compact aside{width:74px}
+body.compact main{margin-left:74px}
+body.compact :is(.navtext,.grp,.brand strong){display:none}
+.quick{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 15px}
+.report-table{overflow:auto}
+.report-table table{min-width:540px}
+@media(max-width:780px){
+  aside nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));max-height:210px}
+  .grp{grid-column:1/-1}
+  nav button{white-space:normal}
+  aside footer{display:none!important}
+  body.compact main{margin-left:0}
+  body.compact aside{width:auto}
+}
+@media print{
+  aside,.head input,.actions,button{display:none!important}
+  main,body.compact main{margin:0;padding:0}
+}
+.entry-error{background:#fef2f2!important;color:#9e2626!important;border-color:#fecaca!important}
+</style>
+
+<aside>
+  <div class="brand">
+    <div class="mark" aria-hidden="true">▥</div>
+    <strong>GSP SMART PPS<small>Plant Problem Solving · GSP.1</small></strong>
+  </div>
+  <nav aria-label="เมนูหลัก">
+    <small class="grp">OVERVIEW</small>
+    <button data-page="overview" title="Dashboard" aria-label="Dashboard"><span class="navicon">D</span><span class="navtext">Dashboard</span></button>
+    <small class="grp">PPS REPORT</small>
+    <button data-page="monthly" title="Monthly PPS Report" aria-label="Monthly PPS Report"><span class="navicon">M</span><span class="navtext">Monthly PPS Report</span></button>
+    <button data-page="yearly" title="Yearly Summary" aria-label="Yearly Summary"><span class="navicon">Y</span><span class="navtext">Yearly Summary</span></button>
+    <button data-page="create" title="Create New Report" aria-label="Create New Report"><span class="navicon">C</span><span class="navtext">Create New Report</span></button>
+
+    <small class="grp">PERFORMANCE</small>
+    <button data-page="process" title="Process" aria-label="Process"><span class="navicon">P</span><span class="navtext">Process</span></button>
+    <button data-page="utility" title="Utility" aria-label="Utility"><span class="navicon">U</span><span class="navtext">Utility</span></button>
+
+    <small class="grp">SHIFT PERFORMANCE</small>
+    <button data-page="shiftA" title="Shift A" aria-label="Shift A"><span class="navicon">S</span><span class="navtext">Shift A</span></button>
+    <button data-page="shiftB" title="Shift B" aria-label="Shift B"><span class="navicon">S</span><span class="navtext">Shift B</span></button>
+    <button data-page="shiftC" title="Shift C" aria-label="Shift C"><span class="navicon">S</span><span class="navtext">Shift C</span></button>
+    <button data-page="shiftD" title="Shift D" aria-label="Shift D"><span class="navicon">S</span><span class="navtext">Shift D</span></button>
+
+    <small class="grp">PLANT PROBLEM SOLVING</small>
+    <button data-page="breakdown" title="Equipment Breakdown" aria-label="Equipment Breakdown"><span class="navicon">E</span><span class="navtext">Equipment Breakdown</span></button>
+    <button data-page="control" title="Off Control Value" aria-label="Off Control Value"><span class="navicon">O</span><span class="navtext">Off Control Value</span></button>
+    <button data-page="refrig" title="Make up Refrigeration" aria-label="Make up Refrigeration"><span class="navicon">M</span><span class="navtext">Make up Refrigeration</span></button>
+    <button data-page="pond" title="Water System / Pond" aria-label="Water System / Pond"><span class="navicon">W</span><span class="navtext">Water System / Pond</span></button>
+    <button data-page="weak" title="Weak Point" aria-label="Weak Point"><span class="navicon">W</span><span class="navtext">Weak Point</span></button>
+    <button data-page="isolation" title="Isolation Book" aria-label="Isolation Book"><span class="navicon">I</span><span class="navtext">Isolation Book</span></button>
+    <button data-page="override" title="Override / Bypass" aria-label="Override / Bypass"><span class="navicon">O</span><span class="navtext">Override / Bypass</span></button>
+    <button data-page="follow" title="Follow up &amp; Notification" aria-label="Follow up &amp; Notification"><span class="navicon">F</span><span class="navtext">Follow up &amp; Notification</span></button>
+    <button data-page="workorder" title="Pending Work Order" aria-label="Pending Work Order"><span class="navicon">P</span><span class="navtext">Pending Work Order</span></button>
+
+    <small class="grp">SYSTEM</small>
+    <button data-page="history" title="Data Management" aria-label="Data Management"><span class="navicon">D</span><span class="navtext">Data Management</span></button>
+    <button data-page="settings" title="Settings" aria-label="Settings"><span class="navicon">S</span><span class="navtext">Settings</span></button>
+  </nav>
+  <footer>
+    <button id="collapse" aria-label="ย่อหรือขยายเมนู" aria-expanded="true">⇤ <span class="navtext">ย่อเมนู / Collapse</span></button>
+  </footer>
+</aside>
+
+<main>
+  <header class="head">
+    <div>
+      <span class="eyebrow">UTILITY OPERATION</span>
+      <h1 id="title"></h1>
+      <p id="subtitle"></p>
+    </div>
+    <label>เดือนรายงาน<input id="month" type="month" required></label>
+  </header>
+
+  <div class="content">
+    <p class="note" id="notice" role="status" hidden></p>
+
+    <section id="overview">
+      <div class="overview-banner">
+        <div>
+          <span>MONTHLY OPERATIONS REVIEW</span>
+          <strong>สถานะการเดินเครื่อง</strong>
+          <small>ติดตามเหตุขัดข้อง เวลาหยุด และประเด็นที่ยังไม่ปิด</small>
+        </div>
+        <button data-page="breakdown">บันทึก Equipment Breakdown <b>→</b></button>
+      </div>
+      <div class="quick" aria-label="PPS Quick Access">
+        <button data-page="breakdown">Equipment Breakdown</button>
+        <button data-page="control">Off Control Value</button>
+        <button data-page="pond">Water System / Pond</button>
+        <button data-page="follow">Follow up</button>
+      </div>
+
+      <div class="cards" id="overviewCards"></div>
+
+      <article class="panel">
+        <div class="sectionhead">
+          <h2>แนวโน้ม Equipment Breakdown</h2>
+          <button data-page="breakdown">เปิดรายการ →</button>
+        </div>
+        <p class="note" id="chartYear"></p>
+        <div class="scroll"><div class="bars" id="bars"></div></div>
+      </article>
+
+      <article class="panel">
+        <div class="sectionhead">
+          <h2>สรุปประจำเดือน</h2>
+          <button id="editSummary">แก้ไขข้อมูล</button>
+        </div>
+        <p id="summary" style="white-space:pre-wrap;overflow-wrap:anywhere"></p>
+      </article>
+    </section>
+
+    <section id="breakdown" hidden>
+      <form id="eventForm" autocomplete="off">
+        <article class="panel form-panel" id="entry">
+          <div class="sectionhead">
+            <div class="form-heading">
+              <span class="step">01</span>
+              <div>
+                <h2 id="eventTitle">รายละเอียดเหตุขัดข้อง</h2>
+                <p>ระบุอุปกรณ์และวันที่เกิดเหตุ</p>
+              </div>
+            </div>
+            <span class="hint">* ช่องที่ต้องกรอก</span>
+          </div>
+          <div class="grid">
+            <label>วันที่เกิดเหตุ *<input name="date" type="date" required></label>
+            <label>Equipment Tag *<input name="tag" placeholder="เช่น P-101A" maxlength="60" required></label>
+            <label>ประเภท
+              <select name="category">
+                <option>Mechanical</option>
+                <option>Electrical</option>
+                <option>Instrument</option>
+                <option>Process</option>
+                <option>Other</option>
+              </select>
+            </label>
+          </div>
+        </article>
+
+        <article class="panel form-panel">
+          <div class="sectionhead">
+            <div class="form-heading">
+              <span class="step">02</span>
+              <div>
+                <h2>ปัญหาและการติดตาม</h2>
+                <p>บันทึกอาการ เวลาหยุด และการดำเนินการ</p>
+              </div>
+            </div>
+          </div>
+          <div class="grid">
+            <label class="wide">ปัญหา / อาการที่พบ *
+              <textarea name="problem" placeholder="ระบุอาการที่พบหรือเหตุที่ทำให้อุปกรณ์หยุด" required maxlength="1000"></textarea>
+            </label>
+            <label class="wide">การแก้ไข / แผนติดตาม
+              <textarea name="action" placeholder="ระบุการแก้ไขเบื้องต้นหรือสิ่งที่ต้องติดตาม" maxlength="1000"></textarea>
+            </label>
+            <label>Downtime (ชั่วโมง) *<input type="number" min="0" step="0.01" name="hours" value="0" required></label>
+            <label>ผู้รับผิดชอบ<input name="owner" maxlength="80"></label>
+            <label>กำหนดเสร็จ<input type="date" name="due"></label>
+            <label>สถานะ
+              <select name="status">
+                <option>Open</option>
+                <option>In Progress</option>
+                <option>Monitor</option>
+                <option>Closed</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="actions">
+            <button class="primary" id="saveBreakdown" type="submit">บันทึกรายการ</button>
+            <button type="button" id="resetEntry">ล้างฟอร์ม</button>
+          </div>
+          <p id="entryFeedback" class="note" role="status" hidden></p>
+        </article>
+      </form>
+
+      <article class="panel">
+        <div class="sectionhead">
+          <h2>ทะเบียน Equipment Breakdown</h2>
+          <button class="primary" id="add">+ รายการใหม่</button>
+        </div>
+        <p id="registerPeriod" class="note"></p>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>วันที่</th>
+                <th>Equipment Tag</th>
+                <th>ปัญหา / การแก้ไข</th>
+                <th>Downtime (ชม.)</th>
+                <th>ผู้รับผิดชอบ / กำหนดเสร็จ</th>
+                <th>สถานะ</th>
+                <th>จัดการ</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <section id="history" hidden>
+      <article class="panel">
+        <div class="sectionhead">
+          <h2>ข้อมูลย้อนหลัง</h2>
+          <div class="toolbar">
+            <button id="exportReports">Export Report List CSV</button>
+            <button id="export" class="primary">Export Breakdown CSV</button>
+          </div>
+        </div>
+        <p class="note">CSV ส่งออกรายการ Equipment Breakdown ทุกเดือนที่บันทึก เปิดด้วย Excel ได้</p>
+        <div class="actions">
+          <button id="backupBreakdown">สำรอง Breakdown (.json)</button>
+          <button id="importBreakdown">นำเข้าไฟล์สำรอง</button>
+          <input id="backupInput" type="file" accept=".json,application/json" hidden>
+        </div>
+        <p class="note">ข้อมูลบันทึกในเบราว์เซอร์นี้ ไม่ซิงก์ข้ามเครื่อง ไฟล์ JSON ใช้ย้ายข้อมูลหรือกู้คืน และจะเพิ่มเฉพาะรหัสรายการที่ยังไม่มี</p>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>เดือน</th>
+                <th>จำนวนเหตุ</th>
+                <th>Downtime (ชม.)</th>
+                <th>รายการยังไม่ปิด</th>
+                <th>เปิดรายงาน</th>
+              </tr>
+            </thead>
+            <tbody id="historyRows"></tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <section id="monthly" hidden>
+      <article class="panel">
+        <div class="sectionhead">
+          <h2>Monthly PPS Report</h2>
+          <button data-page="create" class="primary">＋ Create Report</button>
+          <button id="printReport">Print / Save PDF</button>
+        </div>
+        <div id="reportList" class="report-table"></div>
+      </article>
+    </section>
+
+    <section id="yearly" hidden>
+      <article class="panel">
+        <div class="sectionhead"><h2>Yearly Summary</h2></div>
+        <div id="yearList" class="report-table"></div>
+      </article>
+    </section>
+
+    <section id="create" hidden>
+      <article class="panel">
+        <div class="sectionhead"><h2 id="reportTitle">Create New Monthly PPS Report</h2></div>
+        <form id="reportForm">
+          <div class="grid">
+            <label>Report Month<input type="month" name="month" required></label>
+            <label>Area / หน่วยงาน
+              <select name="area">
+                <option>GSP.1</option>
+                <option>GSP.1 Process</option>
+                <option>GSP.1 Utility</option>
+              </select>
+            </label>
+            <label>Shift
+              <select name="shift">
+                <option>All Shifts</option>
+                <option>Shift A</option>
+                <option>Shift B</option>
+                <option>Shift C</option>
+                <option>Shift D</option>
+              </select>
+            </label>
+            <label>Report Title<input name="title" required 
