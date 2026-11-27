@@ -1,860 +1,94 @@
 <!doctype html>
-<html lang="th">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GSP SMART PPS | Registers R2</title>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GSP SMART PPS | GSP.1 · Registers R2</title>
 <style>
-:root{--ink:#172640;--nav:#101b30;--blue:#245fce;--line:#dce6f2;--muted:#526580}
-*{box-sizing:border-box}
-[hidden]{display:none!important}
-body{margin:0;background:#f4f7fb;color:var(--ink);font:15px "Segoe UI",Tahoma,sans-serif;display:grid;grid-template-columns:245px minmax(0,1fr);min-height:100vh}
-aside{position:sticky;top:0;height:100dvh;overflow:auto;background:var(--nav);color:white;padding:22px 14px}
-aside strong{display:block;font-size:18px}
-aside small{color:#abc0db}
-nav{margin-top:16px}
-.group{display:block;margin:14px 9px 5px;font-size:10px;letter-spacing:1px}
-nav button{display:block;width:100%;text-align:left;background:transparent;color:#cbd9ed;margin:2px 0;font-size:13px}
-nav button:hover,nav button[aria-current=page]{background:var(--blue);color:white}
-main{min-width:0;padding:24px clamp(14px,3vw,40px)}
-header,.tools{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
-header{justify-content:space-between;margin-bottom:20px}
-h1{font-size:28px;margin:4px 0}
-h2{font-size:18px;margin:0 0 12px}
-p{color:var(--muted)}
-.kicker{color:var(--blue);font-size:11px;letter-spacing:1px;font-weight:800}
-.panel,.metric{background:white;border:1px solid var(--line);border-radius:14px;padding:17px;margin-bottom:14px}
-.hero{background:#172d50;color:white}
-.hero p{color:#d5e5fa}
-.grid,.cards{display:grid;gap:12px}
-.grid{grid-template-columns:repeat(3,minmax(0,1fr))}
-.cards{grid-template-columns:repeat(4,minmax(0,1fr))}
-.metric{border-top:3px solid var(--blue)}
-.metric strong{display:block;font-size:23px;margin-top:6px}
-.wide{grid-column:1/-1}
-button,input,textarea,select{font:inherit}
-button{border:0;border-radius:8px;padding:8px 11px;background:#e8effb;color:#17447f;cursor:pointer;font-weight:650}
-.primary{background:var(--blue);color:white}
-.danger,.error{background:#fff0ee;color:#982626}
-label{display:grid;gap:5px;font-size:13px;font-weight:650;color:#36516e}
-input,select,textarea{width:100%;min-width:0;padding:9px;border:1px solid #ccd9eb;border-radius:8px;background:#fbfcfe;color:var(--ink)}
-textarea{min-height:74px;resize:vertical}
-.actions{margin-top:14px}
-.msg:empty{display:none}
-.msg{padding:9px 12px;border:1px solid var(--line);border-radius:8px}
-.scroll{overflow:auto}
-table{width:100%;min-width:600px;border-collapse:collapse;font-size:13px}
-th,td{text-align:left;padding:9px;border-bottom:1px solid var(--line);vertical-align:top;overflow-wrap:anywhere;white-space:pre-wrap}
-th{background:#f0f5fc}
-.chart{display:grid;grid-template-columns:repeat(12,1fr);gap:8px;min-width:460px}
-.barcol{display:grid;grid-template-rows:20px 94px 22px;justify-items:center;align-items:end;font-size:11px}
-.bar{width:60%;max-width:34px;background:#82aef0;border-radius:4px 4px 0 0}
-.bar.active{background:var(--blue)}
-:focus-visible{outline:2px solid #4587ec;outline-offset:2px}
-@media(max-width:850px){.grid,.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:680px){
-  body{display:block}
-  aside{height:auto;position:static}
-  nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));max-height:215px;overflow:auto}
-  .group{grid-column:1/-1}
-  main{padding:15px}
-}
-@media(max-width:450px){.grid,.cards{grid-template-columns:1fr}}
-@media print{body{display:block}aside,button,header label,.msg{display:none!important}main{padding:0}}
-</style>
-</head>
-<body>
-<aside>
-  <strong>▦ GSP SMART PPS</strong>
-  <small>GSP.1 · Registers R2</small>
-  <nav id="nav" aria-label="เมนูหลัก"></nav>
-</aside>
-<main>
-<header>
-  <div><span class="kicker">GSP.1 · UTILITY OPERATION</span><h1 id="pageTitle">Dashboard</h1></div>
-  <label>เดือนรายงาน <input id="month" type="month"></label>
-</header>
-<noscript><p class="msg error">เว็บนี้ต้องใช้ JavaScript กรุณาเปิดไฟล์ HTML โดยตรงในเบราว์เซอร์</p></noscript>
-<p id="storageWarning" class="msg error" role="status"></p>
-<p id="status" class="msg" role="status"></p>
-
-<section id="overview">
-  <article class="panel hero">
-    <h2>ภาพรวมประจำเดือน</h2>
-    <p>เลือกทะเบียนเพื่อเพิ่มข้อมูล หรือเลือกเดือนด้านบนเพื่อดูย้อนหลัง</p>
-    <div id="shortcuts" class="tools"></div>
-  </article>
-  <div id="metrics" class="cards"></div>
-  <article class="panel">
-    <h2>แนวโน้ม Equipment Breakdown</h2>
-    <p id="chartLabel"></p>
-    <div class="scroll"><div id="chart" class="chart"></div></div>
-  </article>
-  <form id="noteForm" class="panel">
-    <h2>สรุปประจำเดือน</h2>
-    <label>ประเด็นสำคัญ / สิ่งที่ต้องติดตาม <textarea id="note" maxlength="2500"></textarea></label>
-    <div class="actions"><button type="submit" class="primary">บันทึกสรุป</button></div>
-  </form>
-</section>
-
-<section id="register" hidden>
-  <form id="registerForm" class="panel" autocomplete="off">
-    <h2 id="formTitle"></h2>
-    <p id="formHelp"></p>
-    <div id="fields" class="grid"></div>
-    <div class="tools actions">
-      <button id="submitRegister" type="submit" class="primary">บันทึกรายการ</button>
-      <button id="resetRegister" type="button">ล้างฟอร์ม / ยกเลิก</button>
-    </div>
-    <p id="formStatus" class="msg" role="status"></p>
-  </form>
-  <article class="panel">
-    <h2 id="listTitle"></h2>
-    <div class="tools"><button id="registerCsv" type="button">ส่งออก CSV ของเดือนนี้</button></div>
-    <p id="listPeriod"></p>
-    <div id="registerTable" class="scroll"></div>
-  </article>
-</section>
-
-<section id="create" hidden>
-  <form id="reportForm" class="panel">
-    <h2 id="reportTitle">สร้างหัวรายงาน PPS</h2>
-    <div class="grid">
-      <label>เดือนรายงาน * <input name="month" type="month" required></label>
-      <label>พื้นที่ <select name="area"><option>GSP.1</option><option>GSP.1 Process</option><option>GSP.1 Utility</option></select></label>
-      <label>กะ <select name="shift"><option>All Shifts</option><option>Shift A</option><option>Shift B</option><option>Shift C</option><option>Shift D</option></select></label>
-      <label>ชื่อรายงาน * <input name="title" value="Plant Problem Solving of GSP.1" maxlength="160" required></label>
-      <label>ผู้จัดทำ <input name="author" maxlength="100"></label>
-    </div>
-    <div class="tools actions">
-      <button type="submit" class="primary">บันทึกหัวรายงาน</button>
-      <button id="cancelReport" type="button">ยกเลิก</button>
-    </div>
-  </form>
-</section>
-
-<section id="monthly" hidden>
-  <article class="panel">
-    <h2>Monthly PPS Report</h2>
-    <div class="tools">
-      <button id="newReport" type="button" class="primary">+ สร้างหัวรายงาน</button>
-      <button id="print" type="button">Print / Save PDF</button>
-    </div>
-    <p id="monthlyPeriod"></p>
-    <div id="reportList" class="scroll"></div>
-    <p id="monthlyNote" style="white-space:pre-wrap"></p>
-  </article>
-</section>
-
-<section id="yearly" hidden>
-  <article class="panel"><h2>Yearly Summary</h2><div id="yearList" class="scroll"></div></article>
-</section>
-
-<section id="data" hidden>
-  <article class="panel">
-    <h2>Data Management</h2>
-    <div class="tools">
-      <button id="bdCsv" type="button">Export Breakdown CSV</button>
-      <button id="reportCsv" type="button">Export Report List CSV</button>
-      <button id="backup" type="button">สำรองทะเบียนทั้งหมด (.json)</button>
-      <button id="restore" type="button">นำเข้าไฟล์สำรอง</button>
-      <input id="backupFile" type="file" accept=".json,application/json" hidden>
-    </div>
-    <p>JSON สำรองทั้ง 9 ทะเบียน ไม่รวมหัวรายงานและสรุปประจำเดือน การนำเข้าจะเพิ่มรายการใหม่โดยไม่ทับรหัสเดิม</p>
-    <div id="history" class="scroll"></div>
-  </article>
-</section>
-
-<section id="settings" hidden>
-  <article class="panel">
-    <h2>การจัดเก็บข้อมูล</h2>
-    <p>ข้อมูลเก็บในเบราว์เซอร์ ไม่ซิงก์ข้ามเครื่อง สำรองทะเบียนก่อนเปลี่ยนไฟล์หรือเครื่อง</p>
-    <button id="goData" type="button">เปิด Data Management</button>
-  </article>
-</section>
-
-<section id="pending" hidden>
-  <article class="panel"><h2 id="pendingTitle"></h2><p>หน้านี้ยังเป็นโครงเมนูและยังไม่มีฟอร์มบันทึก</p></article>
-</section>
-</main>
-
-<script>
+:root{--ink:#172640;--nav:#101b30;--blue:#245fce;--line:#dce6f2;--muted:#526580}*{box-sizing:border-box}[hidden]{display:none!important}body{margin:0;background:#f4f7fb;color:var(--ink);font:15px 'Segoe UI',Tahoma,sans-serif;display:grid;grid-template-columns:235px minmax(0,1fr);min-height:100vh}aside{background:var(--nav);color:white;padding:22px 14px;position:sticky;top:0;height:100dvh;overflow:auto}aside strong{display:block;font-size:18px}aside small{color:#a7bad9}nav{margin-top:24px}nav button{display:block;width:100%;text-align:left;background:transparent;color:#c5d5ec;margin:5px 0}nav button:hover,nav button[aria-current=page]{background:var(--blue);color:white}main{padding:24px clamp(14px,3vw,40px);min-width:0}header,.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center}header{justify-content:space-between;margin-bottom:20px}h1{margin:3px 0;font-size:28px}h2{font-size:18px;margin:0 0 12px}.tag{color:var(--blue);font-size:11px;font-weight:800;letter-spacing:1px}.panel,.metric{background:white;border:1px solid var(--line);border-radius:14px;padding:17px;margin-bottom:14px}.hero{background:#172d50;color:white}.hero p{color:#d5e5fa}.cards,.grid{display:grid;gap:12px;grid-template-columns:repeat(3,minmax(0,1fr))}.cards{grid-template-columns:repeat(4,minmax(0,1fr))}.metric{border-top:3px solid var(--blue)}.metric strong{display:block;font-size:24px;margin-top:6px}.wide{grid-column:1/-1}p{color:var(--muted)}button,input,textarea,select{font:inherit}button{border:0;border-radius:8px;padding:9px 12px;background:#e8effb;color:#17447f;cursor:pointer;font-weight:650}.primary{background:var(--blue);color:white}.danger{color:#982626;background:#fff0ee}label{display:grid;gap:5px;color:#36516e;font-size:13px;font-weight:650}input,select,textarea{width:100%;min-width:0;padding:9px;border:1px solid #ccd9eb;border-radius:8px;background:#fbfcfe;color:var(--ink)}textarea{min-height:70px;resize:vertical}.actions{margin-top:14px}.scroll{overflow:auto}table{width:100%;min-width:620px;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:9px;border-bottom:1px solid var(--line);vertical-align:top;overflow-wrap:anywhere}th{background:#f0f5fc}.msg:empty{display:none}.msg{background:#e8f4ff;padding:9px 12px;border-radius:8px}.error{background:#fff0ee;color:#982626}.chart{display:grid;grid-template-columns:repeat(12,1fr);gap:8px;min-width:460px}.barcol{display:grid;grid-template-rows:22px 90px 20px;align-items:end;justify-items:center;font-size:11px}.bar{width:60%;max-width:34px;background:#82aef0;border-radius:5px 5px 0 0}.activebar{background:var(--blue)}:focus-visible{outline:2px solid #4587ec;outline-offset:2px}@media(max-width:850px){.cards,.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:680px){body{display:block}aside{position:static;height:auto}nav{display:flex;gap:6px;overflow:auto;margin-top:10px}nav button{width:auto;white-space:nowrap}main{padding:15px}}@media(max-width:450px){.grid{grid-template-columns:1fr}}@media print{body{display:block}aside,button,header label{display:none!important}main{padding:0}}
+.navgroup{display:block;color:#a7bad9;font-size:10px;letter-spacing:1px;margin:15px 7px 4px}nav button{font-size:13px;margin:1px 0;padding:7px 10px}@media(max-width:680px){nav{display:grid;grid-template-columns:1fr 1fr;max-height:230px}.navgroup{grid-column:1/-1}nav button{white-space:normal}}
+</style></head><body>
+<aside><strong>▦ GSP SMART PPS</strong><small>Plant Problem Solving · GSP.1 · Registers R2</small><nav aria-label="เมนูหลัก"><small class="navgroup">OVERVIEW</small><button type="button" data-go="overview">Dashboard</button><small class="navgroup">PPS REPORT</small><button type="button" data-go="monthly">Monthly PPS Report</button><button type="button" data-go="yearly">Yearly Summary</button><button type="button" data-go="create">Create New Report</button><small class="navgroup">PERFORMANCE</small><button type="button" data-go="process">Process</button><button type="button" data-go="utility">Utility</button><small class="navgroup">SHIFT PERFORMANCE</small><button type="button" data-go="shiftA">Shift A</button><button type="button" data-go="shiftB">Shift B</button><button type="button" data-go="shiftC">Shift C</button><button type="button" data-go="shiftD">Shift D</button><small class="navgroup">PLANT PROBLEM SOLVING</small><button type="button" data-go="breakdown">Equipment Breakdown</button><button type="button" data-go="control">Off Control Value</button><button type="button" data-go="refrig">Make up Refrigeration</button><button type="button" data-go="pond">Water System / Pond</button><button type="button" data-go="weak">Weak Point</button><button type="button" data-go="isolation">Isolation Book</button><button type="button" data-go="override">Override / Bypass</button><button type="button" data-go="follow">Follow up & Notification</button><button type="button" data-go="workorder">Pending Work Order</button><small class="navgroup">SYSTEM</small><button type="button" data-go="data">Data Management</button><button type="button" data-go="settings">Settings</button></nav></aside>
+<main><header><div><span class="tag">GSP.1 · UTILITY OPERATION</span><h1 id="title">Dashboard</h1></div><label>เดือนรายงาน<input id="month" type="month"></label></header><noscript><p>ต้องเปิด JavaScript เพื่อใช้งานฟอร์ม กรุณาเปิดไฟล์ HTML โดยตรงในเบราว์เซอร์</p></noscript><p id="status" class="msg" role="status"></p>
+<section id="overview"><div class="panel hero"><h2>ภาพรวมประจำเดือน</h2><p>บันทึกเหตุขัดข้องและผล Lab นอกเกณฑ์จากสองเมนูนี้</p><div class="tools"><button data-go="breakdown">Equipment Breakdown →</button><button data-go="control">Off Control Value →</button></div></div><div class="cards" id="metrics"></div><article class="panel"><h2>แนวโน้ม Equipment Breakdown</h2><p id="chartYear"></p><div class="scroll"><div id="trend" class="chart"></div></div></article><form class="panel" id="noteForm"><h2>สรุปประจำเดือน</h2><label>ประเด็นสำคัญ / สิ่งที่ต้องติดตาม<textarea id="note" maxlength="2500"></textarea></label><div class="actions"><button class="primary">บันทึกสรุป</button></div></form></section>
+<section id="breakdown" hidden><form id="bd" class="panel"><h2 id="bdTitle">บันทึก Equipment Breakdown</h2><div class="grid"><label>วันที่เกิดเหตุ *<input name="date" type="date" required></label><label>Equipment Tag *<input name="tag" maxlength="60" required></label><label>ประเภท<select name="category"><option>Mechanical</option><option>Electrical</option><option>Instrument</option><option>Process</option><option>Other</option></select></label><label class="wide">ปัญหา *<textarea name="problem" maxlength="1000" required></textarea></label><label class="wide">การแก้ไข<textarea name="action" maxlength="1000"></textarea></label><label>Downtime (ชม.) *<input name="hours" type="number" min="0" step="0.01" value="0" required></label><label>ผู้รับผิดชอบ<input name="owner" maxlength="80"></label><label>กำหนดเสร็จ<input name="due" type="date"></label><label>สถานะ<select name="status"><option>Open</option><option>In Progress</option><option>Monitor</option><option>Closed</option></select></label></div><div class="tools actions"><button class="primary">บันทึกรายการ</button><button type="button" id="bdReset">ล้างฟอร์ม / ยกเลิก</button></div><p id="bdMsg" class="msg" role="status"></p></form><article class="panel"><h2>ทะเบียน Equipment Breakdown</h2><p id="bdMonth"></p><div id="bdTable" class="scroll"></div></article></section>
+<section id="control" hidden><form id="oc" class="panel"><h2 id="ocTitle">บันทึกผล Lab นอก Control</h2><div class="grid"><label>วันที่เก็บตัวอย่าง *<input name="date" type="date" required></label><label>ระบบ *<select name="system" required><option value="">เลือกระบบ</option><option>BFW</option><option>Aux. Boiler</option><option>WHB</option><option>CHP Boiler</option><option>Other</option></select></label><label>จุดเก็บตัวอย่าง<input name="sample" maxlength="100"></label><label>Parameter *<input name="parameter" maxlength="80" required></label><label>ค่าที่วัดได้ *<input name="value" type="number" step="any" required></label><label>หน่วย *<input name="unit" maxlength="30" placeholder="ไม่มีหน่วยให้กรอก –" required></label><label>Control Min<input name="min" type="number" step="any"></label><label>Control Max<input name="max" type="number" step="any"></label><label>สถานะ<select name="status"><option>Open</option><option>In Progress</option><option>Closed</option></select></label><label class="wide">การแก้ไข / หมายเหตุ<textarea name="action" maxlength="1500"></textarea></label></div><p>กรอก Min หรือ Max อย่างน้อยหนึ่งค่า โดยใช้เกณฑ์ที่หน่วยงานอนุมัติสำหรับจุดเก็บตัวอย่างและ Parameter นั้น</p><div class="tools"><button class="primary">บันทึกผล Lab</button><button type="button" id="ocReset">ล้างฟอร์ม / ยกเลิก</button></div><p id="ocMsg" class="msg" role="status"></p></form><article class="panel"><h2>ทะเบียน Off Control Value</h2><button id="ocCsv">ส่งออก CSV ของเดือนนี้</button><p id="ocMonth"></p><div id="ocTable" class="scroll"></div></article></section>
+<section id="create" hidden><article class="panel"><h2 id="reportTitle">สร้างหัวรายงาน PPS</h2><form id="report"><div class="grid"><label>เดือนรายงาน *<input name="month" type="month" required></label><label>พื้นที่<select name="area"><option>GSP.1</option><option>GSP.1 Process</option><option>GSP.1 Utility</option></select></label><label>กะ<select name="shift"><option>All Shifts</option><option>Shift A</option><option>Shift B</option><option>Shift C</option><option>Shift D</option></select></label><label>ชื่อรายงาน *<input name="title" value="Plant Problem Solving of GSP.1" maxlength="160" required></label><label>ผู้จัดทำ<input name="author" maxlength="100"></label></div><div class="tools actions"><button class="primary">บันทึกหัวรายงาน</button><button id="reportReset" type="button">ยกเลิก</button></div></form></article></section><section id="monthly" hidden><article class="panel"><h2>Monthly PPS Report</h2><div class="tools"><button type="button" data-go="create" class="primary">+ สร้างหัวรายงาน</button><button id="print" type="button">Print / Save PDF</button></div><p id="reportMonth"></p><div id="reports" class="scroll"></div><p id="reportNote" style="white-space:pre-wrap"></p></article></section>
+<section id="yearly" hidden><article class="panel"><h2>Yearly Summary</h2><div id="yearTable" class="scroll"></div></article></section>
+<section id="data" hidden><article class="panel"><h2>Data Management</h2><div class="tools"><button id="bdCsv">Export Breakdown CSV</button><button id="reportCsv">Export Report List CSV</button><button id="extraBackup" type="button">สำรอง 7 ทะเบียนใหม่ (.json)</button><button id="extraRestore" type="button">นำเข้า 7 ทะเบียนใหม่</button><input id="extraFile" type="file" accept=".json,application/json" hidden><button id="backup">สำรองทะเบียน JSON</button><button id="import">นำเข้าไฟล์สำรอง</button><input id="file" type="file" accept=".json,application/json" hidden></div><p>ข้อมูลเก็บในเบราว์เซอร์ ไม่ซิงก์ข้ามเครื่อง ไฟล์ JSON สำรองทะเบียนทั้งสอง และนำเข้าไฟล์ Breakdown รุ่นเดิมได้โดยไม่เขียนทับรหัสที่มีอยู่</p><div id="history" class="scroll"></div></article></section>
+<section id="refrig" hidden><form id="form_refrig" class="panel" autocomplete="off"><h2 id="formTitle_refrig">บันทึก Make up Refrigeration</h2><div class="grid"><label>วันที่เติม *<input type="date" name="date" required></label><label>อุปกรณ์ / ระบบ *<input type="text" name="ref" required maxlength="120"></label><label>ชนิดสารทำความเย็น *<input type="text" name="f0" required maxlength="300"></label><label>ปริมาณที่เติม *<input type="number" name="f1" required step="any" min="0"></label><label>หน่วย *<input type="text" name="f2" required maxlength="300"></label><label>ผู้รับผิดชอบ<input type="text" name="owner" maxlength="80"></label><label>กำหนดติดตาม<input type="date" name="due"></label><label>สถานะ<select name="status"><option>Open</option><option>In Progress</option><option>Monitor</option><option>Closed</option></select></label><label class="wide">หมายเหตุ<textarea name="note" maxlength="1500"></textarea></label></div><div class="tools actions"><button type="submit" class="primary" disabled>บันทึกรายการ</button><button type="button" id="reset_refrig">ล้างฟอร์ม / ยกเลิก</button></div><p id="extraMsg_refrig" class="msg" role="status">กำลังเปิดระบบบันทึก</p></form><article class="panel"><h2>ทะเบียน Make up Refrigeration</h2><button type="button" id="csv_refrig">ส่งออก CSV ของเดือนนี้</button><p id="period_refrig"></p><div id="extraTable_refrig" class="scroll"></div></article></section><section id="pond" hidden><form id="form_pond" class="panel" autocomplete="off"><h2 id="formTitle_pond">บันทึก Water System / Pond</h2><div class="grid"><label>วันที่ตรวจ *<input type="date" name="date" required></label><label>ชื่อบ่อ / จุดตรวจ *<input type="text" name="ref" required maxlength="120"></label><label>รายการตรวจ *<input type="text" name="f0" required maxlength="300"></label><label>ค่าที่วัดได้ *<input type="number" name="f1" required step="any"></label><label>หน่วย *<input type="text" name="f2" required maxlength="300"></label><label>ผู้รับผิดชอบ<input type="text" name="owner" maxlength="80"></label><label>กำหนดติดตาม<input type="date" name="due"></label><label>สถานะ<select name="status"><option>Open</option><option>In Progress</option><option>Monitor</option><option>Closed</option></select></label><label class="wide">หมายเหตุ<textarea name="note" maxlength="1500"></textarea></label></div><div class="tools actions"><button type="submit" class="primary" disabled>บันทึกรายการ</button><button type="button" id="reset_pond">ล้างฟอร์ม / ยกเลิก</button></div><p id="extraMsg_pond" class="msg" role="status">กำลังเปิดระบบบันทึก</p></form><article class="panel"><h2>ทะเบียน Water System / Pond</h2><button type="button" id="csv_pond">ส่งออก CSV ของเดือนนี้</button><p id="period_pond"></p><div id="extraTable_pond" class="scroll"></div></article></section><section id="weak" hidden><form id="form_weak" class="panel" autocomplete="off"><h2 id="formTitle_weak">บันทึก Weak Point</h2><div class="grid"><label>วันที่พบ *<input type="date" name="date" required></label><label>พื้นที่ / Equipment Tag *<input type="text" name="ref" required maxlength="120"></label><label>จุดอ่อนที่พบ *<input type="text" name="f0" required maxlength="300"></label><label>ผลกระทบ<input type="text" name="f1" maxlength="300"></label><label>มาตรการติดตาม<input type="text" name="f2" maxlength="300"></label><label>ผู้รับผิดชอบ<input type="text" name="owner" maxlength="80"></label><label>กำหนดติดตาม<input type="date" name="due"></label><label>สถานะ<select name="status"><option>Open</option><option>In Progress</option><option>Monitor</option><option>Closed</option></select></label><label class="wide">หมายเหตุ<textarea name="note" maxlength="1500"></textarea></label></div><div class="tools actions"><button type="submit" class="primary" disabled>บันทึกรายการ</button><button type="button" id="reset_weak">ล้างฟอร์ม / ยกเลิก</button></div><p id="extraMsg_weak" class="msg" role="status">กำลังเปิดระบบบันทึก</p></form><article class="panel"><h2>ทะเบียน Weak Point</h2><button type="button" id="csv_weak">ส่งออก CSV ของเดือนนี้</button><p id="period_weak"></p><div id="extraTable_weak" class="scroll"></div></article></section><section id="isolation" hidden><form id="form_isolation" class="panel" autocomplete="off"><h2 id="formTitle_isolation">บันทึก Isolation Book</h2><p>ทะเบียนนี้ใช้บันทึกอ้างอิงเท่านั้น ไม่ใช่การอนุมัติหรือคำสั่งปฏิบัติงาน ให้ใช้เอกสารและระบบที่หน่วยงานอนุมัติเป็นหลัก</p><div class="grid"><label>วันที่บันทึก *<input type="date" name="date" required></label><label>Equipment Tag *<input type="text" name="ref" required maxlength="120"></label><label>เลข Isolation / Permit *<input type="text" name="f0" required maxlength="300"></label><label>ขอบเขตตามเอกสาร<input type="text" name="f1" maxlength="300"></label><label>เลขอ้างอิงการคืนระบบ<input type="text" name="f2" maxlength="300"></label><label>ผู้รับผิดชอบ<input type="text" name="owner" maxlength="80"></label><label>กำหนดติดตาม<input type="date" name="due"></label><label>สถานะ<select name="status"><option>Open</option><option>In Progress</option><option>Monitor</option><option>Closed</option></select></label><label class="wide">หมายเหตุ<textarea name="note" maxlength="1500"></textarea></label></div><div class="tools actions"><button type="submit" class="primary" disabled>บันทึกรายการ</button><button type="button" id="reset_isolation">ล้างฟอร์ม / ยกเลิก</button></div><p id="extraMsg_isolation" class="msg" role="status">กำลังเปิดระบบบันทึก</p></form><article class="panel"><h2>ทะเบียน Isolation Book</h2><button type="button" id="csv_isolation">ส่งออก CSV ของเดือนนี้</button><p id="period_isolation"></p><div id="extraTable_isolation" class="scroll"></div></article></section><section id="override" hidden><form id="form_override" class="panel" autocomplete="off"><h2 id="formTitle_override">บันทึก Override / Bypass</h2><p>ทะเบียนนี้ใช้บันทึกอ้างอิงเท่านั้น ไม่ใช่การอนุมัติหรือคำสั่งปฏิบัติงาน ให้ใช้เอกสารและระบบที่หน่วยงานอนุมัติเป็นหลัก</p><div class="grid"><label>วันที่บันทึก *<input type="date" name="date" required></label><label>Equipment / Instrument Tag *<input type="text" name="ref" required maxlength="120"></label><label>เลขอ้างอิงการอนุมัติ / e-MOC *<input type="text" name="f0" required maxlength="300"></label><label>เหตุผลตามเอกสาร<input type="text" name="f1" maxlength="300"></label><label>วันที่หมดอายุ<input type="date" name="f2"></label><label>ผู้รับผิดชอบ<input type="text" name="owner" maxlength="80"></label><label>กำหนดติดตาม<input type="date" name="due"></label><label>สถานะ<select name="status"><option>Open</option><option>In Progress</option><option>Monitor</option><option>Closed</option></select></label><label class="wide">หมายเหตุ<textarea name="note" maxlength="1500"></textarea></label></div><div class="tools actions"><button type="submit" class="primary" disabled>บันทึกรายการ</button><button type="button" id="reset_override">ล้างฟอร์ม / ยกเลิก</button></div><p id="extraMsg_override" class="msg" role="status">กำลังเปิดระบบบันทึก</p></form><article class="panel"><h2>ทะเบียน Override / Bypass</h2><button type="button" id="csv_override">ส่งออก CSV ของเดือนนี้</button><p id="period_override"></p><div id="extraTable_override" class="scroll"></div></article></section><section id="follow" hidden><form id="form_follow" class="panel" autocomplete="off"><h2 id="formTitle_follow">บันทึก Follow up &amp; Notification</h2><div class="grid"><label>วันที่เปิดรายการ *<input type="date" name="date" required></label><label>เรื่องติดตาม *<input type="text" name="ref" required maxlength="120"></label><label>หน่วยงาน / ช่องทางแจ้ง<input type="text" name="f0" maxlength="300"></label><label>ผลการติดตาม<input type="text" name="f1" maxlength="300"></label><label>เลขอ้างอิง<input type="text" name="f2" maxlength="300"></label><label>ผู้รับผิดชอบ<input type="text" name="owner" maxlength="80"></label><label>กำหนดติดตาม<input type="date" name="due"></label><label>สถานะ<select name="status"><option>Open</option><option>In Progress</option><option>Monitor</option><option>Closed</option></select></label><label class="wide">หมายเหตุ<textarea name="note" maxlength="1500"></textarea></label></div><div class="tools actions"><button type="submit" class="primary" disabled>บันทึกรายการ</button><button type="button" id="reset_follow">ล้างฟอร์ม / ยกเลิก</button></div><p id="extraMsg_follow" class="msg" role="status">กำลังเปิดระบบบันทึก</p></form><article class="panel"><h2>ทะเบียน Follow up &amp; Notification</h2><button type="button" id="csv_follow">ส่งออก CSV ของเดือนนี้</button><p id="period_follow"></p><div id="extraTable_follow" class="scroll"></div></article></section><section id="workorder" hidden><form id="form_workorder" class="panel" autocomplete="off"><h2 id="formTitle_workorder">บันทึก Pending Work Order</h2><div class="grid"><label>วันที่แจ้ง *<input type="date" name="date" required></label><label>เลข Work Order *<input type="text" name="ref" required maxlength="120"></label><label>Equipment Tag *<input type="text" name="f0" required maxlength="300"></label><label>รายละเอียดงาน<input type="text" name="f1" maxlength="300"></label><label>ลำดับความสำคัญ<input type="text" name="f2" maxlength="300"></label><label>ผู้รับผิดชอบ<input type="text" name="owner" maxlength="80"></label><label>กำหนดติดตาม<input type="date" name="due"></label><label>สถานะ<select name="status"><option>Open</option><option>In Progress</option><option>Monitor</option><option>Closed</option></select></label><label class="wide">หมายเหตุ<textarea name="note" maxlength="1500"></textarea></label></div><div class="tools actions"><button type="submit" class="primary" disabled>บันทึกรายการ</button><button type="button" id="reset_workorder">ล้างฟอร์ม / ยกเลิก</button></div><p id="extraMsg_workorder" class="msg" role="status">กำลังเปิดระบบบันทึก</p></form><article class="panel"><h2>ทะเบียน Pending Work Order</h2><button type="button" id="csv_workorder">ส่งออก CSV ของเดือนนี้</button><p id="period_workorder"></p><div id="extraTable_workorder" class="scroll"></div></article></section><section id="pending" hidden><article class="panel"><h2 id="pendingTitle"></h2><p>เมนูนี้ยังเป็นโครง ไม่ได้เปิดให้บันทึกข้อมูล</p></article></section><section id="settings" hidden><article class="panel"><h2>การจัดเก็บข้อมูล</h2><p>ข้อมูลอยู่ในเบราว์เซอร์ ไม่ได้ซิงก์ข้ามเครื่อง ใช้ Data Management เพื่อสำรองทะเบียน</p><button type="button" data-go="data">เปิด Data Management</button></article></section></main><script>
 'use strict';
+const $=id=>document.getElementById(id), month=$('month'), bd=$('bd'), oc=$('oc'), rf=$('report');
+const key='pps_utility_ptw_style_v1', rkey='gspSmartPpsReports', schema='gsp-smart-pps-registers';
+const titles={"overview": "Dashboard", "monthly": "Monthly PPS Report", "yearly": "Yearly Summary", "create": "Create New Report", "process": "Process", "utility": "Utility", "shiftA": "Shift A", "shiftB": "Shift B", "shiftC": "Shift C", "shiftD": "Shift D", "breakdown": "Equipment Breakdown", "control": "Off Control Value", "refrig": "Make up Refrigeration", "pond": "Water System / Pond", "weak": "Weak Point", "isolation": "Isolation Book", "override": "Override / Bypass", "follow": "Follow up & Notification", "workorder": "Pending Work Order", "data": "Data Management", "settings": "Settings"};
+const pad=n=>String(n).padStart(2,'0'), d=new Date(), today=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const validDate=s=>{if(typeof s!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(s)||s.startsWith('0000-'))return false;const dt=new Date(s+'T00:00:00Z');return Number.isFinite(+dt)&&dt.toISOString().slice(0,10)===s};
+const validMonth=s=>validDate(s+'-01'), current=today.slice(0,7), dateDefault=()=>month.value===current?today:month.value+'-01';
+const thai=m=>new Intl.DateTimeFormat('th-TH',{month:'long',year:'numeric',timeZone:'UTC'}).format(new Date(m+'-01T00:00:00Z'));
+const uid=()=>globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random()}`;
+const str=(v,n,req=false)=>typeof v==='string'&&v.length<=n&&(!req||!!v.trim());
+const direction=x=>x.min!==null&&x.value<x.min?'ต่ำกว่า Control Min':x.max!==null&&x.value>x.max?'สูงกว่า Control Max':'';
+const validBD=x=>x&&validDate(x.date)&&str(x.id,120,true)&&str(x.tag,60,true)&&str(x.problem,1000,true)&&str(x.action,1000)&&str(x.owner,80)&&Number.isFinite(x.hours)&&x.hours>=0&&(x.due===''||validDate(x.due))&&['Mechanical','Electrical','Instrument','Process','Other'].includes(x.category)&&['Open','In Progress','Monitor','Closed'].includes(x.status);
+const validOC=x=>x&&validDate(x.date)&&str(x.id,120,true)&&str(x.sample,100)&&str(x.parameter,80,true)&&str(x.unit,30,true)&&str(x.action,1500)&&['BFW','Aux. Boiler','WHB','CHP Boiler','Other'].includes(x.system)&&['Open','In Progress','Closed'].includes(x.status)&&Number.isFinite(x.value)&&(x.min===null||Number.isFinite(x.min))&&(x.max===null||Number.isFinite(x.max))&&(x.min===null||x.max===null||x.min<=x.max)&&!!direction(x);
+let storageDenied=false;try{localStorage.getItem('pps_utility_ptw_style_v1')}catch{storageDenied=true}
+let db={events:[],offControl:[],notes:{}},reports=[],blocked=false,rblocked=false,ed={events:null,offControl:null},rep=null;
+try{const x=JSON.parse(localStorage.getItem(key)||'null');if(x!==null){if(!Array.isArray(x.events)||!x.notes||typeof x.notes!=='object'||Array.isArray(x.notes)||(x.offControl!==undefined&&!Array.isArray(x.offControl)))throw Error();db={...x,offControl:x.offControl||[]}}}catch{blocked=true}
+try{const x=JSON.parse(localStorage.getItem(rkey)||'[]');if(!Array.isArray(x))throw Error();reports=x.filter(r=>r&&validMonth(r.month))}catch{rblocked=true}
+const warn=()=>storageDenied?'หน้าที่เปิดอยู่ไม่อนุญาตให้ใช้พื้นที่จัดเก็บ กรุณาดาวน์โหลดไฟล์แล้วเปิดจากโฟลเดอร์ Downloads โดยตรง':blocked?'อ่านข้อมูลทะเบียนเดิมไม่ได้ ระบบจะไม่เขียนทับข้อมูลเดิม':rblocked?'อ่านหัวรายงานเดิมไม่ได้ แต่ยังใช้ฟอร์มทะเบียนได้':'';
+const fail='บันทึกไม่ได้ ข้อมูลที่กรอกยังอยู่ กรุณาตรวจสอบการจัดเก็บในเบราว์เซอร์';
+function msg(id,text='',error=false){$(id).textContent=text;$(id).classList.toggle('error',error)}
+function save(next){try{if(blocked)return false;localStorage.setItem(key,JSON.stringify(next));db=next;return true}catch{return false}}
+function el(tag,text){const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n}
+function btn(text,fn,c=''){const b=el('button',text);b.type='button';b.className=c;b.onclick=fn;return b}
+function tab(id,heads,rows){const host=$(id);host.replaceChildren();if(!rows.length){host.append(el('p','ยังไม่มีข้อมูลที่บันทึก'));return}const t=el('table'),h=t.createTHead().insertRow(),body=t.createTBody();for(const name of heads){const th=el('th',name);th.scope='col';h.append(th)}for(const row of rows){const tr=body.insertRow();for(const v of row){const cell=tr.insertCell();if(v instanceof Node)cell.append(v);else cell.textContent=v??'–'}}host.append(t)}
+function fill(form,x){if(x)for(const [k,v] of Object.entries(x)){const field=form.elements.namedItem(k);if(field)field.value=v??''}}
+const configs={events:[bd,'bdTitle','bdMsg','บันทึก Equipment Breakdown','tag'],offControl:[oc,'ocTitle','ocMsg','บันทึกผล Lab นอก Control','parameter']};
+function reset(k,x=null){const [f,t,m,label,focus]=configs[k];f.reset();f.elements.date.value=dateDefault();ed[k]=x?.id||null;fill(f,x);$(t).textContent=x?'แก้ไข: '+x[focus]:label;msg(m);if(x)f.elements.namedItem(focus).focus()}
+function resetReport(x=null){rf.reset();rep=x;rf.elements.month.value=month.value;fill(rf,x);$('reportTitle').textContent=x?'แก้ไขหัวรายงาน PPS':'สร้างหัวรายงาน PPS';if(x)rf.elements.title.focus()}
+function select(m){month.value=validMonth(m)?m:current;for(const k of Object.keys(configs))if(!ed[k])configs[k][0].elements.date.value=dateDefault();if(!rep)rf.elements.month.value=month.value;$('note').value=db.notes[month.value]||''}
+function show(id){if(!Object.hasOwn(titles,id))return;if(id==='create')resetReport();const panel=$(id)||$('pending');if(Object.hasOwn(extra,id))drawExtra(id);$('pendingTitle').textContent=titles[id];document.querySelectorAll('main > section').forEach(n=>n.hidden=n!==panel);document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-current',b.dataset.go===id?'page':'false'));$('title').textContent=titles[id];msg('status',warn(),!!warn());window.scrollTo(0,0)}
+const by=(a,m)=>a.filter(x=>x.date.slice(0,7)===m), order=a=>[...a].sort((x,y)=>y.date.localeCompare(x.date)), hours=a=>a.reduce((n,x)=>n+x.hours,0).toFixed(2), events=()=>db.events.filter(validBD), labs=()=>db.offControl.filter(validOC);
+const bdHeads=['วันที่','Tag','ประเภท','ปัญหา','การแก้ไข','Downtime (ชม.)','ผู้รับผิดชอบ','กำหนดเสร็จ','สถานะ'];
+const ocHeads=['วันที่','ระบบ','จุดเก็บตัวอย่าง','Parameter','ค่าที่วัด','หน่วย','Control Min','Control Max','เทียบเกณฑ์','หมายเหตุ','สถานะ'];
+const bdCols=x=>[x.date,x.tag,x.category,x.problem,x.action,x.hours,x.owner,x.due,x.status];
+const ocCols=x=>[x.date,x.system,x.sample,x.parameter,x.value,x.unit,x.min,x.max,direction(x),x.action,x.status];
+const rpHeads=['เดือน','พื้นที่','กะ','ชื่อรายงาน','ผู้จัดทำ'], rpCols=x=>[x.month,x.area,x.shift,x.title,x.author];
+function action(k,x){const box=el('div');box.className='tools';box.append(btn('แก้ไข',()=>reset(k,x)),btn('ลบ',()=>{if(!confirm('ยืนยันลบรายการนี้?'))return;const m=configs[k][2];if(!save({...db,[k]:db[k].filter(r=>r?.id!==x.id)})){msg(m,fail,true);return}if(ed[k]===x.id)reset(k);render();msg(m,'ลบรายการแล้ว')},'danger'));return box}
+function render(){const m=month.value,y=m.slice(0,4),b=events(),o=labs(),bm=by(b,m),om=by(o,m),months=Array.from({length:12},(_,i)=>y+'-'+pad(i+1));$('metrics').replaceChildren();for(const [label,v] of [['Equipment Breakdown',bm.length+' ครั้ง'],['Downtime รวม',hours(bm)+' ชม.'],['Breakdown ยังไม่ปิด',bm.filter(x=>x.status!=='Closed').length+' รายการ'],['Off Control Value',om.length+' ผลตรวจ']]){const n=el('div');n.className='metric';n.append(el('small',label),el('strong',v));$('metrics').append(n)}$('chartYear').textContent='จำนวนเหตุที่บันทึก · พ.ศ. '+(Number(y)+543);const trend=$('trend'), counts=months.map(k=>by(b,k).length),max=Math.max(1,...counts);trend.replaceChildren();counts.forEach((v,i)=>{const col=el('div'),bar=el('div');col.className='barcol';bar.className='bar'+(m===months[i]?' activebar':'');bar.style.height=Math.max(2,Math.round(v/max*88))+'px';col.append(el('span',v),bar,el('span',pad(i+1)));trend.append(col)});$('bdMonth').textContent=`${thai(m)} · ${bm.length} รายการ`;$('ocMonth').textContent=`${thai(m)} · ${om.length} ผลตรวจ`;$('reportMonth').textContent=`${thai(m)} · Breakdown ${bm.length} ครั้ง · Off Control ${om.length} ผลตรวจ`;$('reportNote').textContent=db.notes[m]||'ยังไม่มีสรุปประจำเดือน';tab('bdTable',[...bdHeads,'จัดการ'],order(bm).map(x=>[...bdCols(x),action('events',x)]));tab('ocTable',[...ocHeads,'จัดการ'],order(om).map(x=>[...ocCols(x),action('offControl',x)]));tab('reports',[...rpHeads,'จัดการ'],reports.filter(r=>r.month===m).map(r=>[...rpCols(r),btn('แก้ไข',()=>{show('create');resetReport(r)})]));const cols=['เดือน','หัวรายงาน','Breakdown','Downtime (ชม.)','Off Control'], stats=k=>[thai(k),reports.filter(r=>r.month===k).length,by(b,k).length,hours(by(b,k)),by(o,k).length];tab('yearTable',cols,months.map(stats));const used=[...new Set([...Object.keys(db.notes),...b.map(x=>x.date.slice(0,7)),...o.map(x=>x.date.slice(0,7)),...reports.map(r=>r.month)])].filter(validMonth).sort().reverse();tab('history',[...cols,'เปิดรายงาน'],used.map(k=>[...stats(k),btn('เปิด Dashboard',()=>{select(k);render();show('overview')})]))}
+function submit(k,e){e.preventDefault();const [f,,m,,name]=configs[k];const x=Object.fromEntries([...new FormData(f)].map(([k,v])=>[k,v.trim()]));x.id=ed[k]||uid();if(k==='events'){const entered=x.hours;x.hours=Number(entered);if(entered===''||!validBD(x)){msg(m,'ตรวจสอบวันที่ Equipment Tag ปัญหา และ Downtime',true);return}}else{const entered=x.value;x.value=Number(entered);x.min=x.min===''?null:Number(x.min);x.max=x.max===''?null:Number(x.max);if(!validDate(x.date)||!x.system||!x.parameter||!x.unit||entered===''||!Number.isFinite(x.value)){msg(m,'กรอกวันที่ ระบบ Parameter ค่าที่วัดได้ และหน่วยให้ครบ',true);return}if(x.min===null&&x.max===null){msg(m,'กรอก Control Min หรือ Control Max อย่างน้อยหนึ่งค่า',true);return}if(x.min!==null&&x.max!==null&&x.min>x.max){msg(m,'Control Min ต้องไม่สูงกว่า Control Max',true);return}if(!direction(x)){msg(m,'ผลตรวจอยู่ในเกณฑ์ จึงไม่บันทึกเป็น Off Control Value',true);return}if(!validOC(x)){msg(m,'ตรวจสอบข้อมูลก่อนบันทึก',true);return}}if(!save({...db,[k]:[...db[k].filter(r=>r?.id!==x.id),x]})){msg(m,fail,true);return}select(x.date.slice(0,7));reset(k);render();msg(m,`บันทึก ${x[name]} แล้ว · ${thai(month.value)}`)}
+bd.onsubmit=e=>submit('events',e);oc.onsubmit=e=>submit('offControl',e);$('bdReset').onclick=()=>reset('events');$('ocReset').onclick=()=>reset('offControl');$('reportReset').onclick=()=>resetReport();$('print').onclick=()=>window.print();month.onchange=()=>{select(month.value);render();refreshExtra()};
+$('noteForm').onsubmit=e=>{e.preventDefault();const notes={...db.notes},v=$('note').value.trim();if(v)notes[month.value]=v;else delete notes[month.value];const ok=save({...db,notes});if(ok)render();msg('status',ok?'บันทึกสรุปแล้ว':fail,!ok)};
+rf.onsubmit=e=>{e.preventDefault();const x=Object.fromEntries([...new FormData(rf)].map(([k,v])=>[k,v.trim()]));if(!validMonth(x.month)||!x.title){msg('status','กรุณาระบุเดือนและชื่อรายงาน',true);return}try{if(rblocked)throw Error();const next=rep?reports.map(r=>r===rep?x:r):[x,...reports];localStorage.setItem(rkey,JSON.stringify(next));reports=next;select(x.month);resetReport();render();show('monthly');msg('status','บันทึกหัวรายงานแล้ว')}catch{msg('status',fail,true)}};
+function download(name,parts,type){const u=URL.createObjectURL(new Blob(parts,{type})),a=el('a');a.href=u;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000)}
+function csv(name,head,rows,feedback='status'){if(!rows.length){msg(feedback,'ยังไม่มีข้อมูลให้ส่งออก');return}const q=v=>{let s=String(v??'');if(typeof v!=='number'&&(/^[\s\uFEFF]*[=+\-@]/.test(s)||/^[\t\r\n]/.test(s)))s="'"+s;return '"'+s.replaceAll('"','""')+'"'};download(name,['\ufeff',[head,...rows].map(r=>r.map(q).join(',')).join('\r\n')],'text/csv;charset=utf-8')}
+$('bdCsv').onclick=()=>csv('PPS_Equipment_Breakdown.csv',bdHeads,order(events()).map(bdCols));$('ocCsv').onclick=()=>csv('PPS_Off_Control_'+month.value+'.csv',ocHeads,order(by(labs(),month.value)).map(ocCols),'ocMsg');$('reportCsv').onclick=()=>csv('PPS_Reports.csv',rpHeads,reports.map(rpCols));
+$('backup').onclick=()=>{const b=events(),o=labs();if(!b.length&&!o.length){msg('status','ยังไม่มีข้อมูลทะเบียนให้สำรอง');return}download('GSP_SMART_PPS_Backup_'+today+'.json',[JSON.stringify({schema,version:1,events:b,offControl:o},null,2)],'application/json')};$('import').onclick=()=>$('file').click();$('file').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;try{if(f.size>8000000)throw Error();const x=JSON.parse(await f.text());if(x?.version!==1||![schema,'gsp-smart-pps-breakdown'].includes(x.schema))throw Error();const o=x.schema===schema?x.offControl:[];if(!Array.isArray(x.events)||!x.events.every(validBD)||!Array.isArray(o)||!o.every(validOC))throw Error();const add=(a,b)=>{const used=new Set(a.map(r=>r?.id));return b.filter(r=>{if(used.has(r.id))return false;used.add(r.id);return true})};const b=add(db.events,x.events),l=add(db.offControl,o);if(!b.length&&!l.length){msg('status','ไม่มีรายการใหม่ให้นำเข้า');return}if(!save({...db,events:[...db.events,...b],offControl:[...db.offControl,...l]})){msg('status',fail,true);return}render();msg('status',`นำเข้า Breakdown ${b.length} รายการ · Off Control ${l.length} รายการ`)}catch{msg('status','ไฟล์สำรองไม่ถูกต้องหรือไม่รองรับ',true)}};
 
-const $ = id => document.getElementById(id);
-const month = $('month');
-const form = $('registerForm');
-const reportForm = $('reportForm');
-const DB_KEY = 'pps_utility_ptw_style_v1';
-const EXTRA_KEY = 'gspSmartPpsExtraRegisters_v1';
-const REPORT_KEY = 'gspSmartPpsReports';
-const ALL_SCHEMA = 'gsp-smart-pps-all-registers';
-const BASE_SCHEMA = 'gsp-smart-pps-registers';
-const OLD_SCHEMA = 'gsp-smart-pps-breakdown';
-const EXTRA_SCHEMA = 'gsp-smart-pps-extra-registers';
-
-const groups = [
-  ['OVERVIEW',[['overview','Dashboard']]],
-  ['PPS REPORT',[['monthly','Monthly PPS Report'],['yearly','Yearly Summary'],['create','Create New Report']]],
-  ['PERFORMANCE',[['process','Process'],['utility','Utility']]],
-  ['SHIFT PERFORMANCE',[['shiftA','Shift A'],['shiftB','Shift B'],['shiftC','Shift C'],['shiftD','Shift D']]],
-  ['PLANT PROBLEM SOLVING',[
-    ['breakdown','Equipment Breakdown'],['control','Off Control Value'],
-    ['refrig','Make up Refrigeration'],['pond','Water System / Pond'],
-    ['weak','Weak Point'],['isolation','Isolation Book'],['override','Override / Bypass'],
-    ['follow','Follow up & Notification'],['workorder','Pending Work Order']
-  ]],
-  ['SYSTEM',[['data','Data Management'],['settings','Settings']]]
-];
-
-const titles = new Map(groups.flatMap(group => group[1]));
-const extras = {
-  refrig:['วันที่เติม','อุปกรณ์ / ระบบ','ชนิดสารทำความเย็น','ปริมาณที่เติม','หน่วย'],
-  pond:['วันที่ตรวจ','ชื่อบ่อ / จุดตรวจ','รายการตรวจ','ค่าที่วัดได้','หน่วย'],
-  weak:['วันที่พบ','พื้นที่ / Equipment Tag','จุดอ่อนที่พบ','ผลกระทบ','มาตรการติดตาม'],
-  isolation:['วันที่บันทึก','Equipment Tag','เลข Isolation / Permit','ขอบเขตตามเอกสาร','เลขอ้างอิงการคืนระบบ'],
-  override:['วันที่บันทึก','Equipment / Instrument Tag','เลขอ้างอิงการอนุมัติ / e-MOC','เหตุผลตามเอกสาร','วันที่หมดอายุ'],
-  follow:['วันที่เปิดรายการ','เรื่องติดตาม','หน่วยงาน / ช่องทางแจ้ง','ผลการติดตาม','เลขอ้างอิง'],
-  workorder:['วันที่แจ้ง','เลข Work Order','Equipment Tag','รายละเอียดงาน','ลำดับความสำคัญ']
-};
-const extraIDs = Object.keys(extras);
-const registers = ['breakdown','control',...extraIDs];
-const categories = ['Mechanical','Electrical','Instrument','Process','Other'];
-const statuses = ['Open','In Progress','Monitor','Closed'];
-const labStatuses = ['Open','In Progress','Closed'];
-const systems = ['BFW','Aux. Boiler','WHB','CHP Boiler','Other'];
-const areas = ['GSP.1','GSP.1 Process','GSP.1 Utility'];
-const shifts = ['All Shifts','Shift A','Shift B','Shift C','Shift D'];
-const monthsTH = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
-const pad = n => String(n).padStart(2,'0');
-const now = new Date();
-const today = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
-const current = today.slice(0,7);
-const fmt = new Intl.DateTimeFormat('th-TH',{month:'long',year:'numeric',timeZone:'UTC'});
-const thaiMonth = m => fmt.format(new Date(m+'-01T00:00:00Z'));
-const uid = () => globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`;
-const obj = x => !!x && typeof x === 'object' && !Array.isArray(x);
-const text = (v,max,required=false) =>
-  typeof v === 'string' && v.length <= max && (!required || v.trim() !== '');
-
-function validDate(v) {
-  if(typeof v !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(v) || v.startsWith('0000-')) return false;
-  const d = new Date(v+'T00:00:00Z');
-  return Number.isFinite(+d) && d.toISOString().slice(0,10) === v;
+const extra={"refrig": ["วันที่เติม", "อุปกรณ์ / ระบบ", "ชนิดสารทำความเย็น", "ปริมาณที่เติม", "หน่วย"], "pond": ["วันที่ตรวจ", "ชื่อบ่อ / จุดตรวจ", "รายการตรวจ", "ค่าที่วัดได้", "หน่วย"], "weak": ["วันที่พบ", "พื้นที่ / Equipment Tag", "จุดอ่อนที่พบ", "ผลกระทบ", "มาตรการติดตาม"], "isolation": ["วันที่บันทึก", "Equipment Tag", "เลข Isolation / Permit", "ขอบเขตตามเอกสาร", "เลขอ้างอิงการคืนระบบ"], "override": ["วันที่บันทึก", "Equipment / Instrument Tag", "เลขอ้างอิงการอนุมัติ / e-MOC", "เหตุผลตามเอกสาร", "วันที่หมดอายุ"], "follow": ["วันที่เปิดรายการ", "เรื่องติดตาม", "หน่วยงาน / ช่องทางแจ้ง", "ผลการติดตาม", "เลขอ้างอิง"], "workorder": ["วันที่แจ้ง", "เลข Work Order", "Equipment Tag", "รายละเอียดงาน", "ลำดับความสำคัญ"]}, extraKey='gspSmartPpsExtraRegisters_v1', extraSchema='gsp-smart-pps-extra-registers';
+const extraIds=Object.keys(extra), extraUI={};
+let extraDb={}, extraLocked=false;
+const extraStatuses=['Open','In Progress','Monitor','Closed'];
+const extraRows=k=>extraDb[k]||[];
+function validExtra(k,x){return x&&typeof x.id==='string'&&x.id.trim()!==''&&x.id.length<=120&&validDate(x.date)&&typeof x.ref==='string'&&x.ref.trim()!==''&&x.ref.length<=120&&Array.isArray(x.fields)&&x.fields.length===3&&x.fields.every(v=>typeof v==='string'&&v.length<=300)&&typeof x.owner==='string'&&x.owner.length<=80&&typeof x.note==='string'&&x.note.length<=1500&&(x.due===''||validDate(x.due))&&extraStatuses.includes(x.status)&&(!['pond','refrig'].includes(k)||(x.fields[0].trim()!==''&&x.fields[1].trim()!==''&&Number.isFinite(Number(x.fields[1]))&&x.fields[2].trim()!==''&&(k!=='refrig'||Number(x.fields[1])>0)))&&(k!=='override'||x.fields[2]===''||validDate(x.fields[2]))&&(!['isolation','override','workorder','weak'].includes(k)||x.fields[0].trim()!=='')}
+function validExtraDB(value){return value&&typeof value==='object'&&!Array.isArray(value)&&Object.entries(value).every(([k,a])=>Object.hasOwn(extra,k)&&Array.isArray(a)&&a.every(x=>validExtra(k,x))&&new Set(a.map(x=>x.id)).size===a.length)}
+try{const raw=localStorage.getItem(extraKey);if(raw!==null){const x=JSON.parse(raw);if(!validExtraDB(x))throw Error();extraDb=x}}catch{extraLocked=true}
+function saveExtra(next){if(extraLocked)return false;try{localStorage.setItem(extraKey,JSON.stringify(next));extraDb=next;return true}catch{return false}}
+function extraFailure(){return extraLocked?'เปิดข้อมูลทะเบียนใหม่ที่จัดเก็บไว้ไม่ได้ หรือเบราว์เซอร์ไม่อนุญาตให้เข้าถึง ระบบไม่เขียนทับข้อมูลเดิม':'บันทึกไม่ได้ กรุณาตรวจสอบสิทธิ์หรือพื้นที่จัดเก็บของเบราว์เซอร์'}
+function initExtra(k){
+ const form=$('form_'+k),title=$('formTitle_'+k),period=$('period_'+k),feedback=$('extraMsg_'+k);
+ extraUI[k]={form,title,period,feedback,edit:null,dirty:false};
+ $('reset_'+k).onclick=()=>resetExtra(k);
+ $('csv_'+k).onclick=()=>csv('PPS_'+k+'_'+month.value+'.csv',extraHeads(k),extraSelected(k).map(extraCols),feedback.id);
+ form.addEventListener('input',()=>{extraUI[k].dirty=true;msg(feedback.id)});
+ form.onsubmit=e=>submitExtra(k,e);
+ resetExtra(k);
+ form.querySelector('[type=submit]').disabled=false;
 }
-const validMonth = v => typeof v === 'string' && validDate(v+'-01');
-const optionalDate = v => v === '' || validDate(v);
-const byMonth = (rows,m) => rows.filter(x => x.date.slice(0,7) === m);
-const sorted = rows => [...rows].sort((a,b) => b.date.localeCompare(a.date));
-const hours = rows => rows.reduce((sum,x) => sum + x.hours,0).toFixed(2);
-const direction = x => x.min !== null && x.value < x.min
-  ? 'ต่ำกว่า Control Min'
-  : x.max !== null && x.value > x.max ? 'สูงกว่า Control Max' : '';
-
-function validBD(x) {
-  return obj(x) && validDate(x.date) && text(x.id,120,true) &&
-    text(x.tag,60,true) && text(x.problem,1000,true) && text(x.action,1000) &&
-    text(x.owner,80) && optionalDate(x.due) && Number.isFinite(x.hours) && x.hours >= 0 &&
-    categories.includes(x.category) && statuses.includes(x.status);
-}
-
-function validOC(x) {
-  return obj(x) && validDate(x.date) && text(x.id,120,true) &&
-    systems.includes(x.system) && labStatuses.includes(x.status) &&
-    text(x.sample,100) && text(x.parameter,80,true) && text(x.unit,30,true) &&
-    text(x.action,1500) && Number.isFinite(x.value) &&
-    (x.min === null || Number.isFinite(x.min)) && (x.max === null || Number.isFinite(x.max)) &&
-    (x.min === null || x.max === null || x.min <= x.max) && !!direction(x);
-}
-
-function validExtra(k,x) {
-  if(!obj(x) || !validDate(x.date) || !text(x.id,120,true) || !text(x.ref,120,true) ||
-     !Array.isArray(x.fields) || x.fields.length !== 3 || !x.fields.every(v => text(v,300)) ||
-     !text(x.owner,80) || !text(x.note,1500) || !optionalDate(x.due) ||
-     !statuses.includes(x.status)) return false;
-  const [a,b,c] = x.fields;
-  if(k === 'refrig' || k === 'pond') {
-    return !!a.trim() && !!b.trim() && !!c.trim() &&
-      Number.isFinite(Number(b)) && (k !== 'refrig' || Number(b) > 0);
-  }
-  if(k === 'override' && !optionalDate(c)) return false;
-  return !['weak','isolation','override','workorder'].includes(k) || !!a.trim();
-}
-
-function validExtras(x) {
-  return obj(x) && Object.entries(x).every(([k,rows]) =>
-    extraIDs.includes(k) && Array.isArray(rows) && rows.every(r => validExtra(k,r)));
-}
-
-function validReport(x) {
-  return obj(x) && validMonth(x.month) && areas.includes(x.area) &&
-    shifts.includes(x.shift) && text(x.title,160,true) && text(x.author,100);
-}
-
-const blocked = new Set();
-const blankDB = {events:[],offControl:[],notes:{}};
-function load(key,fallback,validate) {
-  let raw;
-  try { raw = localStorage.getItem(key); }
-  catch { blocked.add(key); return fallback; }
-  if(raw === null) return fallback;
-  try {
-    const value = JSON.parse(raw);
-    if(!validate(value)) throw new Error('Invalid stored data');
-    return value;
-  } catch {
-    blocked.add(key);
-    return fallback;
-  }
-}
-let db = load(DB_KEY,blankDB,x => obj(x) && Array.isArray(x.events) &&
-  obj(x.notes) && (x.offControl === undefined || Array.isArray(x.offControl)));
-db = {...db,offControl:db.offControl || []};
-let extraDB = load(EXTRA_KEY,{},validExtras);
-let reports = load(REPORT_KEY,[],Array.isArray);
-
-function persist(key,value) {
-  if(blocked.has(key)) return false;
-  try { localStorage.setItem(key,JSON.stringify(value)); return true; }
-  catch { return false; }
-}
-function saveMain(next) {
-  if(!persist(DB_KEY,next)) return false;
-  db = next;
-  return true;
-}
-function saveExtra(next) {
-  if(!persist(EXTRA_KEY,next)) return false;
-  extraDB = next;
-  return true;
-}
-function storageKey(k) {
-  return k === 'breakdown' || k === 'control' ? DB_KEY : EXTRA_KEY;
-}
-function rowsFor(k) {
-  if(k === 'breakdown') return db.events.filter(validBD);
-  if(k === 'control') return db.offControl.filter(validOC);
-  return extraDB[k] || [];
-}
-function updateRows(k,edit) {
-  if(k === 'breakdown') return saveMain({...db,events:edit(db.events)});
-  if(k === 'control') return saveMain({...db,offControl:edit(db.offControl)});
-  return saveExtra({...extraDB,[k]:edit(extraDB[k] || [])});
-}
-
-function el(tag,value,cls) {
-  const node = document.createElement(tag);
-  if(value !== undefined) node.textContent = value;
-  if(cls) node.className = cls;
-  return node;
-}
-function btn(label,fn,cls) {
-  const b = el('button',label,cls);
-  b.type = 'button';
-  b.onclick = fn;
-  return b;
-}
-function msg(id,value='',error=false) {
-  const n = $(id);
-  n.textContent = value;
-  n.classList.toggle('error',error);
-}
-const saveError = 'บันทึกไม่ได้ ข้อมูลที่กรอกยังอยู่ กรุณาตรวจสอบพื้นที่จัดเก็บในเบราว์เซอร์';
-function table(id,head,rows,empty='ยังไม่มีข้อมูลที่บันทึก') {
-  const host = $(id);
-  host.replaceChildren();
-  if(!rows.length) { host.append(el('p',empty)); return; }
-  const t = el('table');
-  const h = t.createTHead().insertRow();
-  const body = t.createTBody();
-  for(const name of head) {
-    const th = el('th',name);
-    th.scope = 'col';
-    h.append(th);
-  }
-  for(const row of rows) {
-    const tr = body.insertRow();
-    for(const v of row) {
-      const td = tr.insertCell();
-      if(v instanceof Node) td.append(v);
-      else td.textContent = v ?? '–';
-    }
-  }
-  host.append(t);
-}
-
-function field(form,name) { return form.elements.namedItem(name); }
-function valuesOf(form) {
-  return Object.fromEntries([...new FormData(form)].map(([k,v]) => [k,v.trim()]));
-}
-function fill(form,record) {
-  for(const [k,v] of Object.entries(record)) {
-    const input = field(form,k);
-    if(input) input.value = v ?? '';
-  }
-}
-function defaultDate() { return month.value === current ? today : month.value+'-01'; }
-
-function addField(label,name,type='text',opts={}) {
-  const l = el('label',label+(opts.required?' *':''));
-  if(type === 'textarea') l.className = 'wide';
-  const input = el(type === 'select' ? 'select' : type === 'textarea' ? 'textarea' : 'input');
-  input.name = name;
-  input.required = !!opts.required;
-  if(type === 'select') {
-    for(const value of opts.options) {
-      const o = el('option',value || 'กรุณาเลือก');
-      o.value = value;
-      input.append(o);
-    }
-  } else {
-    if(type !== 'textarea') input.type = type;
-    if(type === 'text' || type === 'textarea') input.maxLength = opts.max || 300;
-    if(type === 'number') input.step = opts.step || 'any';
-    if(opts.min !== undefined) input.min = String(opts.min);
-    if(opts.value !== undefined) input.defaultValue = opts.value;
-    if(opts.placeholder) input.placeholder = opts.placeholder;
-  }
-  l.append(input);
-  $('fields').append(l);
-}
-
-function buildFields(k) {
-  $('fields').replaceChildren();
-  const req = {required:true};
-  if(k === 'breakdown') {
-    addField('วันที่เกิดเหตุ','date','date',req);
-    addField('Equipment Tag','tag','text',{...req,max:60,placeholder:'เช่น P-101A'});
-    addField('ประเภท','category','select',{options:categories});
-    addField('ปัญหา / อาการที่พบ','problem','textarea',{...req,max:1000});
-    addField('การแก้ไข / แผนติดตาม','action','textarea',{max:1000});
-    addField('Downtime (ชม.)','hours','number',{...req,min:0,step:'0.01',value:'0'});
-    addField('ผู้รับผิดชอบ','owner','text',{max:80});
-    addField('กำหนดเสร็จ','due','date');
-    addField('สถานะ','status','select',{options:statuses});
-    return;
-  }
-  if(k === 'control') {
-    addField('วันที่เก็บตัวอย่าง','date','date',req);
-    addField('ระบบ','system','select',{...req,options:['',...systems]});
-    addField('จุดเก็บตัวอย่าง','sample','text',{max:100});
-    addField('Parameter','parameter','text',{...req,max:80});
-    addField('ค่าที่วัดได้','value','number',req);
-    addField('หน่วย','unit','text',{...req,max:30,placeholder:'ไม่มีหน่วยให้กรอก –'});
-    addField('Control Min','min','number');
-    addField('Control Max','max','number');
-    addField('สถานะ','status','select',{options:labStatuses});
-    addField('การแก้ไข / หมายเหตุ','action','textarea',{max:1500});
-    return;
-  }
-  const labels = extras[k];
-  const measured = k === 'refrig' || k === 'pond';
-  addField(labels[0],'date','date',req);
-  addField(labels[1],'ref','text',{...req,max:120});
-  labels.slice(2).forEach((label,i) => {
-    const type = measured && i === 1 ? 'number' : k === 'override' && i === 2 ? 'date' : 'text';
-    addField(label,'f'+i,type,{
-      required:measured || (i === 0 && ['weak','isolation','override','workorder'].includes(k)),
-      ...(k === 'refrig' && i === 1 ? {min:0} : {})
-    });
-  });
-  addField('ผู้รับผิดชอบ','owner','text',{max:80});
-  addField('กำหนดติดตาม','due','date');
-  addField('สถานะ','status','select',{options:statuses});
-  addField('หมายเหตุ','note','textarea',{max:1500});
-}
-
-function headsFor(k) {
-  if(k === 'breakdown') return [
-    'วันที่','Equipment Tag','ประเภท','ปัญหา','การแก้ไข','Downtime (ชม.)','ผู้รับผิดชอบ','กำหนดเสร็จ','สถานะ'
-  ];
-  if(k === 'control') return [
-    'วันที่','ระบบ','จุดเก็บตัวอย่าง','Parameter','ค่าที่วัด','หน่วย','Control Min','Control Max',
-    'เทียบเกณฑ์','หมายเหตุ','สถานะ'
-  ];
-  return [...extras[k],'ผู้รับผิดชอบ','กำหนดติดตาม','สถานะ','หมายเหตุ'];
-}
-
-function cellsFor(k,x) {
-  if(k === 'breakdown') return [x.date,x.tag,x.category,x.problem,x.action,x.hours,x.owner,x.due,x.status];
-  if(k === 'control') return [x.date,x.system,x.sample,x.parameter,x.value,x.unit,x.min,x.max,direction(x),x.action,x.status];
-  return [x.date,x.ref,...x.fields,x.owner,x.due,x.status,x.note];
-}
-
-let page = 'overview';
-let activeRegister = null;
-let editing = null;
-let dirty = false;
-let reportEdit = null;
-const drafts = new Map();
-
-function formTitle(k) {
-  $('formTitle').textContent = ting ? 'แก้ไข ' : 'บันทึก ') + titles.get(k);
-  $('submitRegister').textContent = editing ? 'บันทึกการแก้ไข' : 'บันทึกรายการ';
-}
-function resetRegister(record=null) {
-  const k = activeRegister;
-  if(!k) return;
-  form.reset();
-  editing = record ? record.id : null;
-  dirty = false;
-  field(form,'date').value = defaultDate();
-  if(record) {
-    fill(form,extraIDs.includes(k) ? {
-      ...record,f0:record.fields[0],f1:record.fields[1],f2:record.fields[2]
-    } : record);
-    field(form,k === 'breakdown' ? 'tag' : k === 'control' ? 'parameter' : 'ref').focus();
-  }
-  formTitle(k);
-  msg('formStatus');
-}
-function openRegister(k) {
-  if(activeRegister === k) return;
-  if(activeRegister && (dirty || editing)) {
-    drafts.set(activeRegister,{record:valuesOf(form),editing,dirty});
-  }
-  activeRegister = k;
-  buildFields(k);
-  $('listTitle').textContent = 'ทะเบียน ' + titles.get(k);
-  $('formHelp').textContent = k === 'control'
-    ? 'กรอก Control Min หรือ Control Max อย่างน้อยหนึ่งค่า โดยใช้เกณฑ์ที่หน่วยงานอนุมัติ'
-    : k === 'isolation' || k === 'override'
-      ? 'ใช้บันทึกอ้างอิงเท่านั้น ไม่ใช่การอนุมัติหรือคำสั่งปฏิบัติงาน'
-      : 'ช่องที่มี * ต้องกรอกก่อนบันทึก';
-  resetRegister();
-  const draft = drafts.get(k);
-  if(draft) {
-    fill(form,draft.record);
-    editing = draft.editing;
-    dirty = draft.dirty;
-    drafts.delete(k);
-    formTitle(k);
-  }
-}
-function resetReport(record=null) {
-  reportForm.reset();
-  reportEdit = record;
-  field(reportForm,'month').value = month.value;
-  $('reportTitle').textContent = record ? 'แก้ไขหัวรายงาน PPS' : 'สร้างหัวรายงาน PPS';
-  if(record) fill(reportForm,record);
-}
-function selectMonth(m) {
-  month.value = validMonth(m) ? m : current;
-  if(activeRegister && !editing && !dirty) field(form,'date').value = defaultDate();
-  if(!reportEdit) field(reportForm,'month').value = month.value;
-  $('note').value = typeof db.notes[month.value] === 'string' ? db.notes[month.value] : '';
-}
-function show(k) {
-  if(!titles.has(k)) return;
-  page = k;
-  if(registers.includes(k)) openRegister(k);
-  if(k === 'create') resetReport();
-  const section = registers.includes(k) ? $('register') : $(k) || $('pending');
-  $('pendingTitle').textContent = titles.get(k);
-  $('pageTitle').textContent = titles.get(k);
-  for(const s of document.querySelectorAll('main > section')) s.hidden = s !== section;
-  for(const b of $('nav').querySelectorAll('button')) {
-    if(b.dataset.page === k) b.setAttribute('aria-current','page');
-    else b.removeAttribute('aria-current');
-  }
-  msg('status');
-  render();
-  window.scrollTo(0,0);
-}
-
-const reportHeads = ['เดือน','พื้นที่','กะ','ชื่อรายงาน','ผู้จัดทำ'];
-const reportCells = x => [x.month,x.area,x.shift,x.title,x.author];
-
-function renderRegister() {
-  const k = activeRegister;
-  if(!k) return;
-  const rows = sorted(byMonth(rowsFor(k),month.value));
-  const unreadable = blocked.has(storageKey(k));
-  $('listPeriod').textContent = thaiMonth(month.value) + ' · ' +
-    (unreadable ? 'อ่านข้อมูลไม่ได้' : rows.length+' รายการ');
-  table('registerTable',[...headsFor(k),'จัดการ'],rows.map(x => {
-    const tools = el('div',undefined,'tools');
-    tools.append(btn('แก้ไข',()=>resetRegister(x)),btn('ลบ',()=>{
-      if(!confirm('ยืนยันลบรายการนี้?')) return;
-      if(!updateRows(k,items => items.filter(r => r?.id !== x.id))) {
-        msg('formStatus','ลบไม่ได้: ไม่สามารถจัดเก็บข้อมูล',true);
-        return;
-      }
-      if(editing === x.id) resetRegister();
-      render();
-      msg('formStatus','ลบรายการแล้ว');
-    },'danger'));
-    return [...cellsFor(k,x),tools];
-  }),unreadable?'ไม่สามารถอ่านทะเบียนเดิมได้':'ยังไม่มีรายการในเดือนนี้');
-}
-
-function render() {
-  const m = month.value;
-  const year = m.slice(0,4);
-  const yearMonths = monthsTH.map((_,i) => `${year}-${pad(i+1)}`);
-  const b = rowsFor('breakdown'), o = rowsFor('control');
-  const bm = byMonth(b,m), om = byMonth(o,m);
-  const baseOK = !blocked.has(DB_KEY), extraOK = !blocked.has(EXTRA_KEY);
-  const reportOK = !blocked.has(REPORT_KEY);
-  const r = reports.filter(validReport);
-
-  $('metrics').replaceChildren();
-  const cards = [
-    ['Equipment Breakdown',baseOK ? bm.length+' ครั้ง' : '–'],
-    ['Downtime รวม',baseOK ? hours(bm)+' ชม.' : '–'],
-    ['Breakdown ยังไม่ปิด',baseOK ? bm.filter(x => x.status !== 'Closed').length+' รายการ' : '–'],
-    ['Off Control Value',baseOK ? om.length+' ผลตรวจ' : '–']
-  ];
-  for(const [name,value] of cards) {
-    const c = el('div',undefined,'metric');
-    c.append(el('small',name),el('strong',value));
-    $('metrics').append(c);
-  }
-
-  $('chart').replaceChildren();
-  $('chartLabel').textContent = baseOK
-    ? 'จำนวนเหตุที่บันทึก · พ.ศ. '+(Number(year)+543)
-    : 'ยังแสดงแนวโน้มไม่ได้ เพราะอ่านทะเบียนเดิมไม่ได้';
-  if(baseOK) {
-    const counts = yearMonths.map(k => byMonth(b,k).length);
-    const max = Math.max(1,...counts);
-    counts.forEach((v,i) => {
-      const column = el('div',undefined,'barcol');
-      const bar = el('div',undefined,'bar'+(yearMonths[i] === m ? ' active' : ''));
-      bar.style.height = Math.max(2,Math.round(v/max*88))+'px';
-      column.append(el('span',v),bar,el('span',monthsTH[i]));
-      $('chart').append(column);
-    });
-  }
-
-  $('monthlyPeriod').textContent = thaiMonth(m) + (baseOK
-    ? ` · Breakdown ${bm.length} ครั้ง · Off Control ${om.length} ผลตรวจ`
-    : ' · อ่านทะเบียนเดิมไม่ได้');
-  $('monthlyNote').textContent = db.notes[m] || 'ยังไม่มีสรุปประจำเดือน';
-  table('reportList',[...reportHeads,'จัดการ'],r.filter(x => x.month === m).map(x => [
-    ...reportCells(x),btn('แก้ไข',()=>{ show('create'); resetReport(x); })
-  ]),reportOK?'ยังไม่มีหัวรายงานในเดือนนี้':'อ่านหัวรายงานเดิมไม่ได้');
-
-  const cols = ['เดือน','หัวรายงาน','Breakdown','Downtime (ชม.)','Off Control','7 ทะเบียนเพิ่มเติม'];
-  const stats = k => [
-    thaiMonth(k),reportOK ? r.filter(x => x.month === k).length : '–',
-    baseOK ? byMonth(b,k).length : '–',baseOK ? hours(byMonth(b,k)) : '–',
-    baseOK ? byMonth(o,k).length : '–',
-    extraOK ? extraIDs.reduce((n,id) => n + byMonth(rowsFor(id),k).length,0) : '–'
-  ];
-  table('yearList',cols,yearMonths.map(stats));
-  const used = [...new Set([
-    ...Object.keys(db.notes),...r.map(x => x.month),
-    ...registers.flatMap(k => rowsFor(k).map(x => x.date.slice(0,7)))
-  ])].filter(validMonth).sort().reverse();
-  table('history',[...cols,'เปิดรายงาน'],used.map(k => [
-    ...stats(k),btn('เปิด Dashboard',()=>{ selectMonth(k); show('overview'); })
-  ]));
-  if(registers.includes(page)) renderRegister();
-}
-
-form.addEventListener('input',()=>{ dirty = true; msg('formStatus'); });
-form.addEventListener('invalid',()=>msg('formStatus','กรุณาตรวจสอบช่องที่ระบุบนฟอร์ม',true),true);
-form.onsubmit = e => {
-  e.preventDefault();
-  const k = activeRegister;
-  if(!k) return;
-  const v = valuesOf(form);
-  const id = editing || uid();
-  let x;
-  let error = '';
-
-  if(k === 'breakdown') {
-    x = {...v,id,hours:Number(v.hours)};
-    if(v.hours === '' || !validBD(x)) error = 'ตรวจสอบวันที่ Equipment Tag ปัญหา และ Downtime';
-  } else if(k === 'control') {
-    x = {...v,id,value:Number(v.value),
-      min:v.min === '' ? null : Number(v.min),max:v.max === '' ? null : Number(v.max)};
-    if(!validDate(v.date) || !v.system || !v.parameter || !v.unit ||
-       v.value === '' || !Number.isFinite(x.value)) {
-      error = 'กรอกวันที่ ระบบ Parameter ค่าที่วัดได้ และหน่วยให้ครบ';
-    } else if(x.min === null && x.max === null) {
-      error = 'กรอก Control Min หรือ Control Max อย่างน้อยหนึ่งค่า';
-    } else if(x.min !== null && x.max !== null && x.min > x.max) {
-      error = 'Control Min ต้องไม่สูงกว่า Control Max';
-    } else if(!direction(x)) {
-      error = 'ผลตรวจอยู่ในเกณฑ์ จึงไม่บันทึกเป็น Off Control Value';
-    } else if(!validOC(x)) {
-      error = 'ตรวจสอบค่าที่กรอกก่อนบันทึก';
-    }
-  } else {
-    x = {id,date:v.date,ref:v.ref,fields:[v.f0,v.f1,v.f2],
-      owner:v.owner,due:v.due,status:v.status,note:v.note};
-    if(!validExtra(k,x)) {
-      error = k === 'refrig'
-        ? 'กรอกวันที่ ระบบ ชนิดสาร ปริมาณมากกว่า 0 และหน่วยให้ครบ'
-        : 'ตรวจสอบวันที่และช่องบังคับก่อนบันทึก';
-    }
-  }
-
-  if(error) { msg('formStatus',error,true); return; }
-  if(!updateRows(k,rows => [...rows.filter(row => row?.id !== x.id),x])) {
-    msg('formStatus',saveError,true);
-    return;
-  }
-  selectMonth(x.date.slice(0,7));
-  resetRegister();
-  render();
-  msg('formStatus',`บันทึก ${x.tag || x.parameter || x.ref} แล้ว · ${thaiMonth(month.value)}`);
-};
-
-$('resetRegister').onclick = () => resetRegister();
-$('noteForm').onsubmit = e => {
-  e.preventDefault();
-  const notes = {...db.notes};
-  const value = $('note').value.trim();
-  if(value) notes[month.value] = value;
-  else delete notes[month.value];
-  if(!saveMain({...db,notes})) { msg('status',saveError,true); return; }
-  render();
-  msg('status','บันทึกสรุปแล้ว');
-};
-reportForm.onsubmit = e => {
-  e.preventDefault();
-  const x = valuesOf(reportForm);
-  if(!validReport(x)) { msg('status','ตรวจสอบเดือนและชื่อรายงานก่อนบันทึก',true); return; }
-  const next = reportEdit ? reports.map(r => r === reportEdit ? x : r) : [x,...reports];
-  if(!persist(REPORT_KEY,next)) { msg('status',saveError,true); return; }
-  reports = next;
-  reportEdit = null;
-  selectMonth(x.month);
-  show('monthly');
-  msg('status','บันทึกหัวรายงานแล้ว');
-};
-$('newReport').onclick = () => show('create');
-$('cancelReport').onclick = () => { reportEdit = null; show('monthly'); };
-$('goData').onclick = () => show('data');
-$('print').onclick = () => window.print();
-
-function download(name,parts,type) {
-  const url = URL.createObjectURL(new Blob(parts,{type}));
-  const a = el('a');
-  a.href = url;
-  a.download = name;
-  document.body.append(a);
-  a.click();
-  a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
-}
-function csv(name,head,rows,feedback='status') {
-  if(!rows.length) { msg(feedback,'ยังไม่มีข้อมูลให้ส่งออก'); return; }
-  const quote = v => {
-    let s = String(v ?? '');
-    if(typeof v !== 'number' && (/^[\s\uFEFF]*[=+\-@]/.test(s) || /^[\t\r\n]/.test(s))) s = "'"+s;
-    return '"'+s.replaceAll('"','""')+'"';
-  };
-  const output = [head,...rows].map(row => row.map(quote).join(',')).join('\r\n');
-  download(name,['\ufeff',output],'text/csv;charset=utf-8');
-}
-
-$('registerCsv').onclick = () => {
-  const k = activeRegister;
-  if(k) csv(`PPS_${k}_${month.value}.csv`,headsFor(k),
-    sorted(byMonth(rowsFor(k),month.value)).map(x => cellsFor(k,x)),'formStatus');
-};
-$('bdCsv').onclick = () => csv('PPS_Equipment_Breakdown.csv',headsFor('breakdown'),
-  sorted(rowsFor('breakdown')).map(x => cellsFor('breakdown',x)));
-$('reportCsv').onclick = () => csv('PPS_Report_List.csv',reportHeads,reports.filter(validReport).map(reportCells));
-
-$('backup').onclick = () => {
-  const payload = {
-    schema:ALL_SCHEMA,version:1,
-    events:rowsFor('breakdown'),offControl:rowsFor('control'),
-    registers:Object.fromEntries(extraIDs.map(k => [k,rowsFor(k)]))
-  };
-  if(!payload.events.length && !payload.offControl.length &&
-     !Object.values(payload.registers).some(rows => rows.length)) {
-    msg('status','ยังไม่มีข้อมูลทะเบียนที่อ่านได้สำหรับสำรอง');
-    return;
-  }
-  download(`GSP_SMART_PPS_Backup_${today}.json`,[JSON.stringify(payload,null,2)],'application/json');
-  if(blocked.has(DB_KEY) || blocked.has(EXTRA_KEY)) {
-    msg('status','ไฟล์สำรองมีเฉพาะทะเบียนที่อ่านได้',true);
-  }
-};
-$('restore').onclick = () => $('backupFile').click();
-
-function onlyNew(existing,incoming) {
-  const seen = new Set(existing.map(r => r?.id));
-  return incoming.filter(r => {
-    if(seen.has(r.id)) return false;
-    seen.add(r.id);
-    return true;
-  });
-}
-$('backupFile').onchange = async e => {
-  const file = e.target.files[0];
-  e.target.value = '';
-  if(!file) return;
-  let incoming;
-  try {
-    if(file.size > 8000000) throw new Error('File too large');
-    const x = JSON.parse(await file.text());
-    if(!obj(x) || x.version !== 1) throw new Error('Invalid backup');
-    if(x.schema === ALL_SCHEMA) {
-      incoming = {events:x.events,offControl:x.offControl,registers:x.registers};
-    } else if(x.schema === EXTRA_SCHEMA) {
-      incoming = {events:[],offControl:[],registers:x.registers};
-    } else if(x.schema === OLD_SCHEMA || x.schema === BASE_SCHEMA) {
-      incoming = {events:x.events,offControl:x.schema === OLD_SCHEMA ? [] : x.offControl,registers:{}};
-    } else throw new Error('Unsupported backup');
-
-    if(!Array.isArray(incoming.events) || !incoming.events.every(validBD) ||
-       !Array.isArray(incoming.offControl) || !incoming.offControl.every(validOC) ||
-       !validExtras(incoming.registers)) throw new Error('Invalid records');
-  } catch {
-    msg('status','นำเข้าไม่ได้: ไฟล์สำรองไม่ถูกต้องหรือไม่รองรับ',true);
-    return;
-  }
-
-  const b = onlyNew(db.events,incoming.events);
-  const o = onlyNew(db.offControl,incoming.offControl);
-  const nextExtra = {...extraDB};
-  let n = 0;
-  for(const k of extraIDs) {
-    const previous = extraDB[k] || [];
-    const added = onlyNew(previous,incoming.registers[k] || []);
-    if(added.length) { nextExtra[k] = [...previous,...added]; n += added.length; }
-  }
-  if(!b.length && !o.length && !n) { msg('status','ไม่มีรายการใหม่ให้นำเข้า'); return; }
-
-  const mainOK = !(b.length || o.length) ||
-    saveMain({...db,events:[...db.events,...b],offControl:[...db.offControl,...o]});
-  const extraOK = !n || saveExtra(nextExtra);
-  render();
-  const result = `นำเข้าแล้ว: Breakdown ${mainOK?b.length:0} · Off Control ${mainOK?o.length:0} · ทะเบียนเพิ่มเติม ${extraOK?n:0} รายการ`;
-  msg('status',result+(!mainOK || !extraOK?' · บางส่วนบันทึกไม่ได้ โปรดเก็บไฟล์สำรองไว้':''),!mainOK || !extraOK);
-};
-
-for(const [group,items] of groups) {
-  $('nav').append(el('small',group,'group'));
-  for(const [k,label] of items) {
-    const b = btn(label,()=>show(k));
-    b.dataset.page = k;
-    $('nav').append(b);
-  }
-}
-for(const k of ['breakdown','control','refrig']) {
-  $('shortcuts').append(btn(titles.get(k)+' →',()=>show(k)));
-}
-if(blocked.size) {
-  const labels = [];
-  if(blocked.has(DB_KEY)) labels.push('Breakdown / Off Control');
-  if(blocked.has(EXTRA_KEY)) labels.push('7 ทะเบียนเพิ่มเติม');
-  if(blocked.has(REPORT_KEY)) labels.push('หัวรายงาน');
-  $('storageWarning').textContent =
-    'อ่านพื้นที่จัดเก็บไม่ได้: '+labels.join(', ')+
-    ' ระบบจะไม่เขียนทับข้อมูลส่วนนั้น กรุณาเปิดไฟล์ที่ดาวน์โหลดโดยตรงใน Edge';
-}
-month.onchange = () => { selectMonth(month.value); render(); };
-selectMonth(current);
-resetReport();
-show('overview');
-</script>
-</body>
-</html>
+function resetExtra(k,x=null){const u=extraUI[k],f=u.form;f.reset();u.edit=x?.id||null;u.dirty=false;u.title.textContent=(x?'แก้ไข ':'บันทึก ')+titles[k];f.elements.namedItem('date').value=dateDefault();if(x){const values={...x,f0:x.fields[0],f1:x.fields[1],f2:x.fields[2]};fill(f,values)}msg(u.feedback.id)}
+const extraHeads=k=>[...extra[k],'ผู้รับผิดชอบ','กำหนดติดตาม','สถานะ','หมายเหตุ'];
+const extraCols=x=>[x.date,x.ref,...x.fields,x.owner,x.due,x.status,x.note];
+const extraSelected=k=>order(by(extraRows(k),month.value));
+function drawExtra(k){const u=extraUI[k];if(!u)return;if(!u.edit&&!u.dirty)u.form.elements.namedItem('date').value=dateDefault();const rows=extraSelected(k);u.period.textContent=thai(month.value)+' · '+(extraLocked?'อ่านข้อมูลไม่ได้':rows.length+' รายการ');tab('extraTable_'+k,[...extraHeads(k),'จัดการ'],rows.map(x=>{const box=el('div');box.className='tools';box.append(btn('แก้ไข',()=>{resetExtra(k,x);u.form.elements.namedItem('ref').focus()}),btn('ลบ',()=>{if(!confirm('ยืนยันลบ '+x.ref+'?'))return;if(!saveExtra({...extraDb,[k]:extraRows(k).filter(r=>r.id!==x.id)})){msg(u.feedback.id,extraFailure(),true);return}if(u.edit===x.id)resetExtra(k);drawExtra(k);msg(u.feedback.id,'ลบรายการแล้ว')},'danger'));return [...extraCols(x),box]}))}
+function refreshExtra(){for(const k of extraIds)drawExtra(k)}
+function submitExtra(k,e){e.preventDefault();const u=extraUI[k],v=Object.fromEntries([...new FormData(u.form)].map(([key,value])=>[key,value.trim()]));const x={id:u.edit||uid(),date:v.date,ref:v.ref,fields:[v.f0,v.f1,v.f2],owner:v.owner,due:v.due,status:v.status,note:v.note};if(!validExtra(k,x)){msg(u.feedback.id,k==='refrig'?'กรอกชนิดสาร ปริมาณมากกว่า 0 และหน่วยให้ครบ':'ตรวจสอบวันที่และช่องบังคับก่อนบันทึก',true);return}if(!saveExtra({...extraDb,[k]:[...extraRows(k).filter(r=>r.id!==x.id),x]})){msg(u.feedback.id,extraFailure(),true);return}select(x.date.slice(0,7));resetExtra(k);render();refreshExtra();msg(u.feedback.id,'บันทึก '+x.ref+' แล้ว · '+thai(month.value))}
+$('extraBackup').onclick=()=>{if(extraLocked){msg('status',extraFailure(),true);return}if(!extraIds.some(k=>extraRows(k).length)){msg('status','ยังไม่มีข้อมูลใน 7 ทะเบียนใหม่');return}download('GSP_PPS_Extra_'+today+'.json',[JSON.stringify({schema:extraSchema,version:1,registers:extraDb},null,2)],'application/json')};
+$('extraRestore').onclick=()=>$('extraFile').click();
+$('extraFile').onchange=async e=>{const file=e.target.files[0];e.target.value='';if(!file)return;try{if(file.size>8000000)throw Error();const v=JSON.parse(await file.text());if(v?.schema!==extraSchema||v.version!==1||!validExtraDB(v.registers))throw Error();let count=0;const next={...extraDb};for(const k of extraIds){const seen=new Set(extraRows(k).map(r=>r.id)),a=(v.registers[k]||[]).filter(r=>!seen.has(r.id));if(a.length){next[k]=[...extraRows(k),...a];count+=a.length}}if(!count){msg('status','ไม่มีรายการใหม่ให้นำเข้า');return}if(!saveExtra(next)){msg('status',extraFailure(),true);return}refreshExtra();msg('status','นำเข้า '+count+' รายการแล้ว')}catch{msg('status','ไฟล์สำรอง 7 ทะเบียนไม่ถูกต้องหรือไม่รองรับ',true)}};
+document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>show(b.dataset.go));select(current);reset('events');reset('offControl');resetReport();render();show('overview');for(const k of extraIds)initExtra(k);refreshExtra();
+</script></body></html>
