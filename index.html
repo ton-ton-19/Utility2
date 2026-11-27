@@ -1,29 +1,100 @@
+from pathlib import Path
 
-smart-pps-gsp1/
-│
-├── app.py
-├── requirements.txt
-├── README.md
-│
-├── data/
-│   ├── equipment_breakdown.csv
-│   ├── lab_off_control.csv
-│   ├── refrigeration.csv
-│   ├── weak_point.csv
-│   ├── isolation_book.csv
-│   ├── override_bypass.csv
-│   └── follow_up.csv
-│
-├── modules/
-│   ├── dashboard.py
-│   ├── calculation.py
-│   ├── analysis.py
-│   └── export_report.py
-│
-├── templates/
-│   └── pps_report.html
-│
-└── .github/
-    └── workflows/
-        └── monthly_report.yml
+html = r'''<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GSP SMART PPS | GSP.1</title>
+<style>
+:root{--navy:#101b30;--navy2:#182943;--blue:#347ff0;--bg:#f3f6fb;--ink:#18243a;--muted:#718096;--line:#e4eaf2;--white:#fff}
+*{box-sizing:border-box}body{margin:0;font:14px "Segoe UI",Tahoma,sans-serif;background:var(--bg);color:var(--ink)}
+.app{display:flex;min-height:100vh}.sidebar{width:258px;background:var(--navy);color:#d8e4f5;display:flex;flex-direction:column;flex-shrink:0;transition:.2s;overflow:hidden}.sidebar.collapsed{width:76px}
+.brand{height:82px;display:flex;align-items:center;gap:12px;padding:0 19px;border-bottom:1px solid #2b3a52;white-space:nowrap}.logo{width:39px;height:39px;border-radius:11px;background:#1f3b66;display:grid;place-items:center;color:#8dbaff;font-size:23px;flex-shrink:0}.brand strong{color:white;font-size:15px}.brand small{display:block;color:#91a6c5;font-size:10px;margin-top:3px}
+.nav{padding:13px 11px;overflow:auto;flex:1}.group{font-size:10px;letter-spacing:1px;color:#7589a7;padding:13px 12px 6px;white-space:nowrap}.nav button{width:100%;border:0;background:transparent;color:#bdcbe0;padding:11px 12px;border-radius:9px;display:flex;align-items:center;gap:13px;text-align:left;cursor:pointer;margin:2px 0;font-weight:600;font-size:12px;white-space:nowrap}.nav button:hover{background:#1b2b45;color:white}.nav button.active{background:var(--blue);color:white;box-shadow:0 5px 15px #0002}.ico{width:20px;text-align:center;font-size:17px;flex-shrink:0}.sidefoot{padding:12px;border-top:1px solid #2b3a52}.sidefoot button{width:100%;padding:11px;border:0;border-radius:9px;background:#1b2b45;color:#d6e3f5;cursor:pointer}.sidebar.collapsed .brand{padding:0 18px}.sidebar.collapsed .brandcopy,.sidebar.collapsed .group,.sidebar.collapsed .txt,.sidebar.collapsed .collapse-label{display:none}.sidebar.collapsed .nav button{justify-content:center;padding:12px 0}
+main{flex:1;min-width:0;padding:25px clamp(15px,3vw,38px) 45px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:22px}.crumb{font-size:11px;color:var(--muted)}h1{font-size:25px;margin:6px 0 4px}.subtitle{font-size:12px;color:var(--muted)}.topright{display:flex;gap:9px;align-items:center}.tag{background:#e8f1ff;color:#2766c8;padding:8px 12px;border-radius:20px;font-size:11px;font-weight:700}.top input{border:1px solid var(--line);border-radius:9px;padding:9px;background:white;color:#40516b}
+.page{display:none}.page.active{display:block}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.card{background:white;border:1px solid var(--line);border-radius:14px;padding:17px;box-shadow:0 2px 5px #15233b05}.metric small{color:var(--muted);font-size:11px}.metric strong{display:block;font-size:25px;margin:8px 0 4px}.metric em{font-style:normal;color:#8a98aa;font-size:10px}.columns{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;margin-top:16px}.section-title{font-size:15px;margin:0 0 13px}.chart{height:180px;display:flex;align-items:end;gap:13px;padding:10px 5px 23px;border-bottom:1px solid var(--line)}.chart .empty{width:100%;text-align:center;align-self:center}.quick{display:grid;grid-template-columns:1fr 1fr;gap:9px}.quick button{display:flex;align-items:center;gap:9px;padding:12px;border:1px solid var(--line);border-radius:10px;background:#fff;text-align:left;cursor:pointer}.quick button:hover{border-color:#9abdf5;background:#f8fbff}.quick b{font-size:11px}.quick small{display:block;font-size:10px;color:var(--muted);margin-top:3px}
+.note{margin-top:14px;padding:12px;border:1px solid #f1dfb4;background:#fff8e8;color:#805b12;border-radius:10px;font-size:11px;line-height:1.6}.muted{color:var(--muted);font-size:11px}.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0}.btn{border:0;background:var(--blue);color:white;padding:10px 14px;border-radius:8px;font-weight:700;cursor:pointer}.btn.alt{background:#e9eef6;color:#40516b}.form{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:15px}.field label{display:block;font-size:11px;font-weight:700;color:#64748b;margin-bottom:6px}.field input,.field select{width:100%;padding:10px;border:1px solid #dce5f0;border-radius:8px;background:white;font:inherit}.empty{padding:25px;text-align:center;color:var(--muted)}table{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px}th,td{text-align:left;padding:11px;border-bottom:1px solid var(--line)}th{background:#f7f9fc;color:#66758a;font-size:10px}
+@media(max-width:1050px){.cards{grid-template-columns:repeat(2,1fr)}.columns{grid-template-columns:1fr}}@media(max-width:700px){.sidebar{width:76px}.sidebar .brand{padding:0 18px}.sidebar .brandcopy,.sidebar .group,.sidebar .txt,.sidebar .collapse-label{display:none}.sidebar .nav button{justify-content:center;padding:12px 0}main{padding:16px 11px}.tag{display:none}.form{grid-template-columns:1fr 1fr}}@media(max-width:470px){.cards{grid-template-columns:1fr 1fr}.form{grid-template-columns:1fr}.top{align-items:flex-start}.topright{flex-direction:column;align-items:flex-end}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+ <div class="brand"><div class="logo">✦</div><div class="brandcopy"><strong>GSP SMART PPS</strong><small>Plant Problem Solving · GSP.1</small></div></div>
+ <nav class="nav">
+  <div class="group">OVERVIEW</div>
+  <button class="active" data-page="dashboard"><span class="ico">▦</span><span class="txt">Dashboard</span></button>
+  <div class="group">PPS REPORT</div>
+  <button data-page="monthly"><span class="ico">▤</span><span class="txt">Monthly PPS Report</span></button>
+  <button data-page="yearly"><span class="ico">▥</span><span class="txt">Yearly Summary</span></button>
+  <button data-page="create"><span class="ico">＋</span><span class="txt">Create New Report</span></button>
+  <div class="group">PERFORMANCE</div>
+  <button data-page="process"><span class="ico">⚙</span><span class="txt">Process</span></button>
+  <button data-page="utility"><span class="ico">♧</span><span class="txt">Utility</span></button>
+  <div class="group">SHIFT PERFORMANCE</div>
+  <button data-page="shiftA"><span class="ico">A</span><span class="txt">Shift A</span></button><button data-page="shiftB"><span class="ico">B</span><span class="txt">Shift B</span></button><button data-page="shiftC"><span class="ico">C</span><span class="txt">Shift C</span></button><button data-page="shiftD"><span class="ico">D</span><span class="txt">Shift D</span></button>
+  <div class="group">PLANT PROBLEM SOLVING</div>
+  <button data-page="breakdown"><span class="ico">⚠</span><span class="txt">Equipment Breakdown</span></button>
+  <button data-page="control"><span class="ico">⌁</span><span class="txt">Off Control Value</span></button>
+  <button data-page="refrig"><span class="ico">❄</span><span class="txt">Make up Refrigeration</span></button>
+  <button data-page="pond"><span class="ico">◉</span><span class="txt">Water System / Pond</span></button>
+  <button data-page="weak"><span class="ico">◇</span><span class="txt">Weak Point</span></button>
+  <button data-page="isolation"><span class="ico">▣</span><span class="txt">Isolation Book</span></button>
+  <button data-page="override"><span class="ico">⛨</span><span class="txt">Override / Bypass</span></button>
+  <button data-page="follow"><span class="ico">♧</span><span class="txt">Follow up & Notification</span></button>
+  <button data-page="workorder"><span class="ico">☷</span><span class="txt">Pending Work Order</span></button>
+  <div class="group">SYSTEM</div>
+  <button data-page="data"><span class="ico">▦</span><span class="txt">Data Management</span></button><button data-page="settings"><span class="ico">⚙</span><span class="txt">Settings</span></button>
+ </nav>
+ <div class="sidefoot"><button id="collapse">⇤ <span class="collapse-label">ย่อเมนู / Collapse</span></button></div>
+</aside>
+<main>
+ <header class="top"><div><div class="crumb">GSP.1 / <span id="crumb">Overview</span></div><h1 id="heading">Dashboard</h1><div class="subtitle" id="subtitle">Plant Problem Solving — ภาพรวมรายงานประจำเดือน</div></div><div class="topright"><span class="tag">GSP.1 · PROCESS / UTILITY</span><input id="period" type="month" value="2025-06"></div></header>
+ <section class="page active" id="dashboard">
+  <div class="cards">
+   <div class="card metric"><small>Equipment Breakdown</small><strong>—</strong><em>รอข้อมูลจริง</em></div><div class="card metric"><small>Off Control Value</small><strong>—</strong><em>รอข้อมูลจริง</em></div><div class="card metric"><small>Follow up Request</small><strong>—</strong><em>รอข้อมูลจริง</em></div><div class="card metric"><small>Override / Bypass</small><strong>—</strong><em>รอข้อมูลจริง</em></div>
+  </div>
+  <div class="columns"><div class="card"><h2 class="section-title">Monthly Performance Trend</h2><div class="chart"><div class="empty">กราฟจะแสดงเมื่อมีการบันทึกข้อมูลจริง</div></div><p class="muted">ยังไม่มีการนำเข้าข้อมูลผลการดำเนินงาน</p></div><div class="card"><h2 class="section-title">PPS Quick Access</h2><div class="quick">
+   <button data-jump="breakdown"><span>⚠</span><span><b>Equipment Breakdown</b><small>เครื่องจักรขัดข้อง</small></span></button><button data-jump="control"><span>⌁</span><span><b>Off Control Value</b><small>ผล Lab นอก Control</small></span></button><button data-jump="pond"><span>◉</span><span><b>Water System / Pond</b><small>ระบบน้ำและบ่อ</small></span></button><button data-jump="follow"><span>♧</span><span><b>Follow up</b><small>รายการติดตาม</small></span></button>
+  </div></div></div>
+  <div class="note"><b>Prototype Notice:</b> ตัวเลข KPI ยังไม่แสดง เนื่องจากยังไม่ได้เชื่อมข้อมูลจริง ระบบนี้เป็นต้นแบบ Phase 1</div>
+ </section>
+ <section class="page" id="monthly"><div class="card"><h2 class="section-title">Monthly PPS Report</h2><p class="muted">รายงาน Plant Problem Solving ประจำเดือน GSP.1</p><div class="toolbar"><button class="btn" onclick="showPage('create')">＋ Create Report</button><button class="btn alt" onclick="window.print()">Print / Save PDF</button></div><div id="reports"></div></div></section>
+ <section class="page" id="yearly"><div class="card"><h2 class="section-title">Yearly Summary</h2><p class="muted">สรุปแนวโน้มรายปีจากรายงานรายเดือน</p><div class="empty">ยังไม่มีข้อมูลรายปี</div></div></section>
+ <section class="page" id="create"><div class="card"><h2 class="section-title">Create New Monthly PPS Report</h2><p class="muted">สร้างหัวรายงานก่อนรวบรวมข้อมูลแต่ละหัวข้อ</p><div class="form">
+  <div class="field"><label>Report Month</label><input id="rmonth" type="month" value="2025-06"></div>
+  <div class="field"><label>Area / หน่วยงาน</label><select id="rarea"><option>GSP.1</option><option>GSP.1 Process</option><option>GSP.1 Utility</option></select></div>
+  <div class="field"><label>Shift</label><select id="rshift"><option>All Shifts</option><option>Shift A</option><option>Shift B</option><option>Shift C</option><option>Shift D</option></select></div>
+  <div class="field"><label>Report Title</label><input id="rtitle" value="Plant Problem Solving of GSP.1"></div>
+  <div class="field"><label>Prepared by</label><input id="rauthor" placeholder="ชื่อผู้จัดทำ"></div>
+ </div><div class="toolbar"><button class="btn" id="save">Save Report</button></div><div class="note">ข้อมูล Prototype บันทึกใน Browser เครื่องนี้ (Local Storage) เท่านั้น ยังไม่ใช่ฐานข้อมูลกลาง</div></div></section>
+ <section class="page" id="process"><div class="card"><h2 class="section-title">Process Performance</h2><p class="muted">รายงานและปัญหาของหน่วย Process</p><div class="empty">ยังไม่มีข้อมูล Process</div></div></section>
+ <section class="page" id="utility"><div class="card"><h2 class="section-title">Utility Performance</h2><p class="muted">รายงานและปัญหาของหน่วย Utility</p><div class="empty">ยังไม่มีข้อมูล Utility</div></div></section>
+ <section class="page" id="shiftA"><div class="card"><h2 class="section-title">Shift A Performance</h2><div class="empty">ยังไม่มีข้อมูล Shift A</div></div></section><section class="page" id="shiftB"><div class="card"><h2 class="section-title">Shift B Performance</h2><div class="empty">ยังไม่มีข้อมูล Shift B</div></div></section><section class="page" id="shiftC"><div class="card"><h2 class="section-title">Shift C Performance</h2><div class="empty">ยังไม่มีข้อมูล Shift C</div></div></section><section class="page" id="shiftD"><div class="card"><h2 class="section-title">Shift D Performance</h2><div class="empty">ยังไม่มีข้อมูล Shift D</div></div></section>
+ <section class="page" id="breakdown"><div class="card"><h2 class="section-title">Equipment Breakdown</h2><p class="muted">บันทึกเหตุขัดข้องแยกตามอุปกรณ์และเดือน</p><div class="empty">เตรียมพื้นที่สำหรับ Air Compressor, Refrigeration, Cooling Fan, Aux. Boiler, WHB, CHP Boiler, Sales Gas และ Gen.3</div></div></section>
+ <section class="page" id="control"><div class="card"><h2 class="section-title">Off Control Value Utility GSP.1 (Lab.)</h2><p class="muted">บันทึกจำนวนครั้งที่ผล Lab อยู่นอก Control Value</p><div class="empty">เตรียมโครงสร้างข้อมูลสำหรับ BFW, Aux. Boiler, WHB และ CHP Boiler</div></div></section>
+ <section class="page" id="refrig"><div class="card"><h2 class="section-title">C3 Make up Refrigeration System</h2><p class="muted">ปริมาณ Make up Refrigeration (m³) รายเดือน</p><div class="empty">ยังไม่มีข้อมูลรายเดือน</div></div></section>
+ <section class="page" id="pond"><div class="card"><h2 class="section-title">200,000 m³ Pond</h2><p class="muted">สถานะบ่อ, Volume, Mitigation Plan และ Monitoring</p><div class="empty">ยังไม่มีข้อมูลสถานะบ่อ</div></div></section>
+ <section class="page" id="weak"><div class="card"><h2 class="section-title">Weak Point</h2><div class="empty">ยังไม่มีข้อมูล Weak Point</div></div></section><section class="page" id="isolation"><div class="card"><h2 class="section-title">Isolation Book</h2><div class="empty">ยังไม่มีข้อมูล Isolation Book</div></div></section><section class="page" id="override"><div class="card"><h2 class="section-title">Override / Bypass</h2><p class="muted">แยกสถานะไม่เกิน 3 วัน และเกิน 3 วัน (e-MOC)</p><div class="empty">ยังไม่มีข้อมูล Override / Bypass</div></div></section><section class="page" id="follow"><div class="card"><h2 class="section-title">Follow up & Notification</h2><div class="empty">ยังไม่มีข้อมูลติดตาม</div></div></section><section class="page" id="workorder"><div class="card"><h2 class="section-title">Pending Work Order</h2><p class="muted">ใบแจ้งซ่อมที่รอปิดโดย Operation GSP#1</p><div class="empty">ยังไม่มีข้อมูล Pending Work Order</div></div></section>
+ <section class="page" id="data"><div class="card"><h2 class="section-title">Data Management</h2><p id="count" class="muted">จำนวนรายงาน: 0</p><button class="btn alt" id="export">Export Report List CSV</button></div></section>
+ <section class="page" id="settings"><div class="card"><h2 class="section-title">Settings</h2><p class="muted">System: GSP SMART PPS · Site: GSP.1 · Language: Thai + Technical English</p><p class="muted">Sidebar: Collapsible · Theme: Dark Navy / Blue</p></div></section>
+</main></div>
+<script>
+const labels={dashboard:['Dashboard','Plant Problem Solving — ภาพรวมรายงานประจำเดือน'],monthly:['Monthly PPS Report','รายงาน PPS ประจำเดือน'],yearly:['Yearly Summary','สรุปผลการดำเนินงานรายปี'],create:['Create New Report','สร้างรายงาน PPS ประจำเดือน'],process:['Process Performance','รายงานหน่วย Process'],utility:['Utility Performance','รายงานหน่วย Utility'],shiftA:['Shift A','รายงานแยกตามกะ'],shiftB:['Shift B','รายงานแยกตามกะ'],shiftC:['Shift C','รายงานแยกตามกะ'],shiftD:['Shift D','รายงานแยกตามกะ'],breakdown:['Equipment Breakdown','ประวัติเครื่องจักรขัดข้อง'],control:['Off Control Value','ผล Lab นอก Control Value'],refrig:['Make up Refrigeration','ปริมาณ Make up Refrigeration'],pond:['Water System / Pond','สถานะระบบน้ำและบ่อ'],weak:['Weak Point','รายการ Weak Point'],isolation:['Isolation Book','สถานะ Isolation Book'],override:['Override / Bypass','ติดตาม Override และ e-MOC'],follow:['Follow up & Notification','รายการติดตามและแจ้งเตือน'],workorder:['Pending Work Order','ใบแจ้งซ่อมที่รอปิด'],data:['Data Management','จัดการข้อมูลรายงาน'],settings:['Settings','ตั้งค่าระบบ']};
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.nav button[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===id));document.getElementById('heading').textContent=labels[id][0];document.getElementById('subtitle').textContent=labels[id][1];document.getElementById('crumb').textContent=labels[id][0];render();}
+document.querySelectorAll('.nav button[data-page]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
+document.querySelectorAll('[data-jump]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.jump)));
+document.getElementById('collapse').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('collapsed'));
+let reports=JSON.parse(localStorage.getItem('gspSmartPpsReports')||'[]');
+document.getElementById('save').addEventListener('click',()=>{let month=document.getElementById('rmonth').value;if(!month){alert('กรุณาเลือก Report Month');return;}reports.unshift({month,area:document.getElementById('rarea').value,shift:document.getElementById('rshift').value,title:document.getElementById('rtitle').value,author:document.getElementById('rauthor').value});localStorage.setItem('gspSmartPpsReports',JSON.stringify(reports));alert('บันทึกหัวรายงานแล้ว');showPage('monthly');});
+function render(){let el=document.getElementById('reports');if(el)el.innerHTML=reports.length?'<table><thead><tr><th>Month</th><th>Area</th><th>Shift</th><th>Report Title</th><th>Prepared by</th></tr></thead><tbody>'+reports.map(r=>'<tr><td>'+r.month+'</td><td>'+r.area+'</td><td>'+r.shift+'</td><td>'+r.title+'</td><td>'+(r.author||'—')+'</td></tr>').join('')+'</tbody></table>':'<div class="empty">ยังไม่มีรายงานที่บันทึกไว้</div>';document.getElementById('count').textContent='จำนวนหัวรายงานที่บันทึกใน Browser นี้: '+reports.length+' รายการ';}
+document.getElementById('period').addEventListener('change',e=>document.getElementById('rmonth').value=e.target.value);
+document.getElementById('export').addEventListener('click',()=>{let rows=[['Month','Area','Shift','Report Title','Prepared by'],...reports.map(r=>[r.month,r.area,r.shift,r.title,r.author])];let csv=rows.map(row=>row.map(v=>'"'+String(v||'').replace(/"/g,'""')+'"').join(',')).join('\r\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.download='GSP_SMART_PPS_Report_List.csv';a.click();URL.revokeObjectURL(a.href);});
+render();
+</script>
+</body></html>'''
 
+path = Path("/mnt/data/GSP_SMART_PPS_GSP1_Phase1.html")
+path.write_text(html, encoding="utf-8")
+print(f"สร้างไฟล์สำเร็จ: {path.name} ({path.stat().st_size:,} bytes)")
